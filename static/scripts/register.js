@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     const BUTTON_ID = "button-reg-form";
 
     var HTTP_STATUS = {OK: 200, CREATED: 201, NOT_FOUND: 404};
+    var registerAlertId = "registerMessage";
+    var registerMessage = "Zarejestrowano!";
 
     prepareEventOnLoginChange();
 
@@ -29,14 +31,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var c2 = isPeselCorrect();
         var c3 = isPasswordCorrect();
         var c4 = isSecondPasswordCorrect();
-        console.log(c1);
-        console.log(c2);
-        console.log(c3);
-        console.log(c4);
 
         if (c1 == true && c2 == true && c3 == true && c4 == true) {
             submitRegisterForm();
         } else {
+            removeWarningMessage(registerAlertId);
             console.log("Wrong data");
         }
     });
@@ -62,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let status = response.status;
 
         if (status === HTTP_STATUS.OK || status === HTTP_STATUS.CREATED) {
+            showWarningMessage(registerAlertId, registerMessage, BUTTON_ID);
             return response.json();
         } else {
             console.error("Response status code: " + response.status);
@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         console.log("Status: " + status);
 
         if (status !== "OK") {
+            removeWarningMessage(registerAlertId);
             console.log("Errors: " + correctResponse.errors);
         }
     }
@@ -103,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     }
 
     function showWarningMessage(newElemId, message, parentElem) {
-        let warningElem = prepareLoginWarningElem(newElemId, message);
+        let warningElem = prepareWarningElem(newElemId, message);
         appendAfterElem(parentElem, warningElem);
     }
 
@@ -115,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
-    function prepareLoginWarningElem(newElemId, message) {
+    function prepareWarningElem(newElemId, message) {
         let warningField = document.getElementById(newElemId);
 
         if (warningField === null) {
@@ -165,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let login = document.getElementById(LOGIN_FIELD_ID);    
         let warningElemId = "loginWarning";
         let warningMessage1 = "Login musi składać się z min. 5 znaków.";
-        let warningMessage2 = "Login może zawierać tylko litery.";
+        let warningMessage2 = "Login musi zawierać tylko litery.";
         var letters = /^[A-Za-z]+$/;
 
         if (login.value.length < 5) {

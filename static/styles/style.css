@@ -157,5 +157,9 @@ hr {
     border: 1px solid black;
 }
 section {
-    margin-top: 75px;
+    margin-top: 50px;
+}
+
+.warning-field {
+    padding-left: 10px;
 }
