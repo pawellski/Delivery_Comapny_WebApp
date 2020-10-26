@@ -80,11 +80,11 @@ a:hover {
 }
 
 .color-table tr:nth-child(odd) {
-    background-color: #dcdcdc;  
+    background-color: #DCDCDC;  
 }
 
 .color-table tr:nth-child(even) {
-    background-color: #ffefd5;
+    background-color: #FFEFD5;
 }
 
 .color-table thead tr {
