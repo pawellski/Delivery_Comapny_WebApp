@@ -13,39 +13,82 @@
             <h1>POST&PARCEL DELIVERY</h1>
             <nav>
                 <ul>
-                    <li><a href="/">HOME</a></li>
-                    <li><a href="/register">REGISTRATION</a></li>
+                    <li><a href="/">STRONA GŁÓWNA</a></li>
+		            <li><a href="/registration">REJESTRACJA</a></li>
+		            <li><a href="/login">LOGOWANIE</a></li>
                 </ul>
             </nav>
         </header>
-        <div class="registration">
+        <div class="main-container">
 
-            <h3>Zarejestruj się</h3>
+            <h3>Dane osobiste</h3>
             <hr>
             <form id="registration-form" class="registration-form">
 
                 <div class="form-row">
-                    <label for="login" class="required">Login</label>
-                    <input id="login" type="text" name="login"/>
+                    <label for="name" class="required">Imię</label>
+                    <input id="name" type="text" name="name" placeholder="Imię"/>
+		        </div>
+		        <div class="form-row">
+                    <label for="surname" class="required">Nazwisko</label>
+                    <input id="surname" type="text" name="surname" placeholder="Nazwisko"/>
                 </div>
 
                 <div class="form-row">
-                    <label for="pesel" class="required">PESEL</label>
-                    <input id="pesel" type="text" name="pesel"/>
+                    <label for="pesel" class="required">Pesel</label>
+                    <input id="pesel" type="text" name="pesel" placeholder="Pesel"/>
+		        </div>
+		        <div class="form-row">
+                    <label for="date_of_birth" class="required">Data urodzenia</label>
+                    <input id="date_of_birth" type="text" name="date_of_birth" placeholder="DD/MM/YYYY"/>
+                </div>
+
+                <h3>Adres zamieszkania</h3>
+                <hr>
+
+                <div class="form-row">
+                    <label for="street" class="required">Ulica</label>
+                    <input id="street" type="text" name="street" placeholder="Ulica"/>
+		        </div>
+		        <div class="form-row">
+                    <label for="number" class="required">Numer</label>
+                    <input id="number" type="text" name="number" placeholder="Numer"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="postal_code" class="required">Kod pocztowy</label>
+                    <input id="postal_code" type="text" name="postal_code" placeholder="DD-DDD"/>
+		        </div>
+		        <div class="form-row">
+                    <label for="city" class="required">Miasto</label>
+                    <input id="city" type="text" name="city" placeholder="Miasto"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="country" class="required">Kraj</label>
+                    <input id="country" type="text" name="country" placeholder="Kraj"/>
+                </div>
+
+                <h3>Dane aplikacji</h3>
+                <hr>
+
+                <div class="form-row">
+                    <label for="login" class="required">Login</label>
+                    <input id="login" type="text" name="login" placeholder="Login"/>
                 </div>
 
                 <div class="form-row">
                     <label for="password" class="required">Hasło</label>
-                    <input id="password" type="password" name="password"/>
+                    <input id="password" type="password" name="password" placeholder="Hasło"/>
                 </div>
 
                 <div class="form-row">
                     <label for="second_password" class="required">Powtórz hasło</label>
-                    <input id="second_password" type="password" name="second_password"/>
+                    <input id="second_password" type="password" name="second_password"placeholder="Powtórz hasło"/>
                 </div>
 
                 <div class="form-row">
-                    <input id="button-reg-form" type="submit" value="Rejestruj"/>
+                    <input id="button-registration-form" type="submit" value="Zarejestruj się"/>
                 </div>
 
             </form>
