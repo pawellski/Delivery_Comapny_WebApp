@@ -1,0 +1,180 @@
+body {
+    background: url("../images/background_2.png");
+    background-repeat: repeat;
+    background-size: auto;
+    background-attachment: fixed;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 46px;
+}
+
+header {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    height: 96px;
+    background-color: burlywood;
+}
+
+section {
+    margin-top: 50px;
+}
+
+h1 {
+    position: fixed;
+    float: left;
+    text-align: center;
+    padding-left: 150px;
+    color: #000000;
+    font-size: 1.4vw;
+}
+
+h2 {
+    text-align: center;
+}
+
+ul {
+    width: auto;
+    float: right;
+    margin-top: 20px;
+}
+
+li {
+    display: inline-block;
+    padding: 15px 30px;
+}
+
+a {
+    text-align: center;
+    color: #000000;
+    text-decoration: none;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.2vw;
+}
+
+a:hover {
+    color: #ffffffff;
+    transition: 0.5s;
+}
+
+.logo {
+    position: absolute;
+    float: left;
+    margin-left: 2%;
+    margin-top: 5px;
+    width: 86px;
+    height: 86px;
+}
+
+.main-container {
+    padding-top: 130px;
+    max-width: 1024px;
+    text-align: justify;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'Cambay', sans-serif;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    background-color: burlywood;
+    max-width: inherit;
+    width: 100%;
+    height: 46px;
+    font-size: 15px;
+}
+
+.footer-inline {
+    display: inline-block;
+    width: 48%;
+    padding-left: 1%;
+}
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+
+
+.form-row{
+    padding: 10px;
+}
+
+input {
+    display: inline-block;
+    border-radius: 10px;
+    width: 250px;
+    min-height: 30px;
+    font-size: 18px;
+}
+
+label{
+    font-size: 20px;
+    display: inline-block;
+    width: 140px;
+    padding: 0px 20px 0px 20px;
+}
+
+#button-registration-form {
+    margin-top: 30px;
+    margin-left: 190px;
+    padding: 15px;
+    min-width: 224px;
+    font-size: 20px;
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+#button-add-package-form{
+    margin-top: 30px;
+    margin-left: 400px;
+    margin-right: 400px;
+    padding: 15px;
+    min-width: 224px;
+    font-size: 20px;
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+#button-login-form {
+    width: 160px;
+    margin-top: 20px;
+    margin-left: 230px;
+    padding: 10px;
+    font-size: 20px;
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+#button-package-image {
+    font-size: 20px;
+    color: black;
+    cursor: pointer;
+    border-radius: 0px;
+    width: 400px;
+}
+
+
+hr {
+    margin-bottom: 25px;
+    border: 1px solid black;
+}
+
+.warning-field {
+    padding-left: 10px;
+    color: red;
+}
+
+#registerMessage {
+	color: black;
+}

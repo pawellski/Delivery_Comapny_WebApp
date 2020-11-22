@@ -1,5 +1,5 @@
 body {
-    background: url("../images/background.png");
+    background: url("../images/background_1.png");
     background-repeat: no-repeat;
     background-size: auto;
     background-attachment: fixed;
@@ -16,13 +16,15 @@ header {
     background-color: burlywood;
 }
 
+section {
+    margin-top: 50px;
+}
 
 h1 {
     position: fixed;
     float: left;
     text-align: center;
     padding-left: 150px;
-    font-family: 'Alfa Slab One', cursive;
     color: #000000;
     font-size: 1.4vw;
 }
@@ -60,7 +62,7 @@ a:hover {
     height: 86px;
 }
 
-.mainContainer {
+.main-container {
     padding-top: 130px;
     max-width: 1024px;
     text-align: justify;
@@ -118,48 +120,4 @@ footer {
 
 .right {
     text-align: right;
-}
-
-.registration{
-    padding-top: 130px;
-    max-width: 1024px;
-    text-align: justify;
-    margin-left: auto;
-    margin-right: auto;
-    font-family: 'Cambay', sans-serif;
-}
-
-.form-row{
-    padding: 20px;
-}
-
-input {
-    display: inline-block;
-}
-
-label{
-    display: inline-block;
-    width: 200px;
-}
-
-#button-reg-form {
-    background-color: white;
-    color: black;
-    padding: 14px 20px;
-    margin-left: 200px;
-    border: 1px solid black;
-    cursor: pointer;
-    width: 20%;
-}
-
-hr {
-    margin-bottom: 25px;
-    border: 1px solid black;
-}
-section {
-    margin-top: 50px;
-}
-
-.warning-field {
-    padding-left: 10px;
 }
