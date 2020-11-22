@@ -8,11 +8,21 @@ document.addEventListener('DOMContentLoaded', function (event) {
     const PESEL_FIELD_ID = "pesel";
     const PASSWORD_FIELD_ID = "password";
     const SECOND_PASSWORD_FIELD_ID = "second_password";
-    const BUTTON_ID = "button-reg-form";
+    const BUTTON_ID = "button-registration-form";
+    const NAME_FIELD_ID = "name";
+    const SURNAME_FIELD_ID = "surname";
+    const BIRTHDAY_FIELD_ID = "date_of_birth";
+    const STREET_FIELD_ID = "street";
+    const NUMBER_FIELD_ID = "number";
+    const POSTAL_CODE_FIELD_ID = "postal_code";
+    const CITY_FIELD_ID = "city";
+    const COUNTRY_FIELD_ID ="country";
+
 
     var HTTP_STATUS = {OK: 200, CREATED: 201, NOT_FOUND: 404};
     var registerAlertId = "registerMessage";
     var registerMessage = "Zarejestrowano!";
+    var loginBeforeRegistration = false;
 
     prepareEventOnLoginChange();
 
@@ -21,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     registrationForm.addEventListener("submit", function (event) {
         event.preventDefault();
         console.log("Form submission stopped.");
+        updateLoginAvailabilityMessage();
 
         var n = event.srcElement.length;
         for (var i = 0; i < n; i++){
@@ -31,8 +42,18 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var c2 = isPeselCorrect();
         var c3 = isPasswordCorrect();
         var c4 = isSecondPasswordCorrect();
+        var c5 = isElementStringCorrect(NAME_FIELD_ID, "nameWarning");
+        var c6 = isElementStringCorrect(SURNAME_FIELD_ID, "surnameWarning");
+        var c7 = isElementStringCorrect(CITY_FIELD_ID, "cityWarning");
+        var c8 = isElementStringCorrect(COUNTRY_FIELD_ID, "countryWarning");
+        var c9 = isElementLengthCorrect(BIRTHDAY_FIELD_ID, "birthdayWarning");
+        var c10 = isElementLengthCorrect(STREET_FIELD_ID, "streetWarning");
+        var c11 = isElementLengthCorrect(NUMBER_FIELD_ID, "numberWarning");
+        var c12 = isElementLengthCorrect(POSTAL_CODE_FIELD_ID, "postalCodeWarning");
 
-        if (c1 == true && c2 == true && c3 == true && c4 == true) {
+        if (c1 == true && c2 == true && c3 == true && c4 == true && c5 == true && c6 == true
+            && c7 ==true && c8 == true && c9 ==true && c10 == true && c11 == true
+            && c12 == true && loginBeforeRegistration == true) {
             submitRegisterForm();
         } else {
             removeWarningMessage(registerAlertId);
@@ -139,10 +160,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
         return Promise.resolve(checkLoginAvailability().then(function (statusCode) {
             console.log(statusCode);
             if (statusCode === HTTP_STATUS.OK) {
+                loginBeforeRegistration = false;
                 return false;
 
             } else if (statusCode === HTTP_STATUS.NOT_FOUND) {
-                return true
+                loginBeforeRegistration = true;
+                return true;
 
             } else {
                 throw "Unknown login availability status: " + statusCode;
@@ -248,4 +271,33 @@ document.addEventListener('DOMContentLoaded', function (event) {
             return false;
         }
     }
+
+    function isElementStringCorrect(element, warningElemId) {
+        let field = document.getElementById(element);
+        let warningMessage = "Pole może zawierać tylko litery.";
+        var letters = /^[A-Za-z]+$/;
+
+        if (field.value.length < 1 || field.value.match(letters) == false) {
+            showWarningMessage(warningElemId, warningMessage, element);
+            return false;
+        } else {
+            removeWarningMessage(warningElemId);
+            return true;
+        }
+
+    }
+
+    function isElementLengthCorrect(element ,warningElemId) {
+        let field = document.getElementById(element);
+        let warningMessage = "Pole nie może być puste.";
+
+        if (field.value.replace(/\s/g, '').length < 1) {
+            showWarningMessage(warningElemId, warningMessage, element);
+            return false;
+        } else {
+            removeWarningMessage(warningElemId);
+            return true;
+        }
+    }
+
 });
