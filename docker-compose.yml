@@ -8,3 +8,5 @@ services:
     volumes: [./PPD_app:/PPD_app]
     environment:
       FLASK_ENV: development
+  redis-db:
+    image: "redis:alpine"
