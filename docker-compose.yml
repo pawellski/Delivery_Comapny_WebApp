@@ -1,0 +1,10 @@
+version: "3"
+services:
+  web-login:
+    build:
+     context: .
+      dockerfile: ./Docker/login/Dockerfile
+    ports: ["8080:8880"]
+    volumes: [./PPD_app:/PPD_app]
+    environment:
+      FLASK_ENV: development
