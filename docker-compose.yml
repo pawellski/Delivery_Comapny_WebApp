@@ -3,7 +3,7 @@ services:
   web-login:
     build:
      context: .
-      dockerfile: ./Docker/login/Dockerfile
+     dockerfile: ./Docker/login/Dockerfile
     ports: ["8080:8880"]
     volumes: [./PPD_app:/PPD_app]
     environment:
