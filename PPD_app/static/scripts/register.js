@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     const GET = "GET";
     const POST = "POST";
-    const URL = "https://pamiw2020registration.herokuapp.com/";
+    const URL = "https://localhost:8080/";
 
     const LOGIN_FIELD_ID = "login";
     const PESEL_FIELD_ID = "pesel";
