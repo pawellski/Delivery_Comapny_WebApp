@@ -274,16 +274,25 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function isElementStringCorrect(element, warningElemId) {
         let field = document.getElementById(element);
-        let warningMessage = "Pole może zawierać tylko litery.";
+        let warningMessage1 = "Pole może zawierać tylko litery.";
+        let warningMessage2 = "Pole nie może być puste.";
         var letters = /^[A-Za-z]+$/;
 
-        if (field.value.length < 1 || field.value.match(letters) == false) {
-            showWarningMessage(warningElemId, warningMessage, element);
+        if (field.value.length < 1) {
+            showWarningMessage(warningElemId, warningMessage2, element);
             return false;
         } else {
             removeWarningMessage(warningElemId);
-            return true;
         }
+
+        if (field.value.match(letters)) {
+            removeWarningMessage(warningElemId);
+        } else {
+            showWarningMessage(warningElemId, warningMessage1, element);            
+            return false;
+        }
+
+        return true;
 
     }
 
