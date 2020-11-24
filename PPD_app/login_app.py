@@ -1,12 +1,13 @@
 from flask import Flask, render_template, make_response
-from flask import request, jsonify
-import hashlib
+from flask import request, jsonify, redirect, url_for
+import hashlib, uuid
 import logging
 import redis
 
 GET = "GET"
 POST = "POST"
 users = "users"
+sessions = "sessions"
 
 app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
@@ -21,9 +22,10 @@ def index():
 def register():
     if request.method == POST:
         form = request.form
-        login = form.get("login")
+        login = form.get("login").encode("utf-8")
 
         errors = registration_validation(form)
+        log.debug(errors)
         if len(errors) == 0:
             db.sadd(users, login)
 
@@ -41,13 +43,34 @@ def register():
             return jsonify({"registration_status": "OK"}), 201
         else:
             body = errors
-            response = make_response(body, 200)
+            response = make_response(body, 400)
+            return response
     else:
         return render_template("registration.html")
 
-@app.route("/login", methods=[GET])
+@app.route("/login", methods=[GET, POST])
 def login():
-    return render_template("login.html")
+    if request.method == POST:
+        form = request.form
+        login = form.get("login").encode("utf-8")
+        password = hashlib.sha512(form.get("password").encode("utf-8")).hexdigest()
+
+        if db.sismember(users, login):
+            if db.hget(login, "password") == password:
+                log.debug("zalogowano!")
+                name_hash = hashlib.sha512(login).hexdigest()
+                session_id = str(uuid.uuid4())
+                log.debug(session_id)
+                db.hset(sessions, session_id.encode("utf-8"), name_hash.encode("utf-8"))
+                log.debug(db.hgetall(sessions))
+                response = make_response(render_template("user_homepage.html"))
+                response.set_cookie(session_id, name_hash,
+                                    max_age=30, secure=True, httponly=True)
+                return response
+
+        return jsonify({"login": "Reject"}), 400
+    else:
+        return render_template("login.html")
 
 @app.route("/user/<string:user>", methods=[GET])
 def check_user(user):
@@ -58,29 +81,34 @@ def check_user(user):
     return jsonify({"user_exists": "False"}), 404
 
 
+@app.route("/user_homepage", methods=[GET])
+def user_homepage():
+    return render_template("user_homepage.html")
+    
+
 def registration_validation(form):
     errors = {}
-    if form.get("name").isalpha() == False:
+    if form.get("name").encode("utf-8").isalpha() == False:
         errors["name"] = "Name incorret."
-    if form.get("surname").isalpha() == False:
-        errors["name"] = "Surname incorrect."
-    if form.get("pesel").isdigit() == False:
+    if form.get("surname").encode("utf-8").isalpha() == False:
+        errors["surname"] = "Surname incorrect."
+    if form.get("pesel").encode("utf-8").isdigit() == False:
         errors["pesel"] = "Pesel incorrect."
-    if form.get("date_of_birth").isspace() == True:
+    if form.get("date_of_birth").encode("utf-8").isspace() == True:
         errors["date_of_birth"] = "Date of birth incorrect."
-    if form.get("street").isspace() == True:
+    if form.get("street").encode("utf-8").isspace() == True:
         errors["street"] = "Street incorrect."
-    if form.get("number").isspace() == True:
+    if form.get("number").encode("utf-8").isspace() == True:
         errors["number"] = "Number incorrect."
-    if form.get("postal_code").isspace() == True:
+    if form.get("postal_code").encode("utf-8").isspace() == True:
         errors["postal_code"] = "Postal code incorrect."
-    if form.get("city").isalpha() == False:
+    if form.get("city").encode("utf-8").isalpha() == False:
         errors["city"] = "City incorrect."
-    if form.get("country").isalpha() == False:
+    if form.get("country").encode("utf-8").isalpha() == False:
         errors["country"] = "Country incorrect."
-    if form.get("login").isalpha() == False:
+    if form.get("login").encode("utf-8").isalpha() == False:
         errors["login"] = "Login incorrect."
-    if form.get("password").isspace() == True:
+    if form.get("password").encode("utf-8").isspace() == True:
         errors["password"] = "Password incorrect."
     
     return errors
