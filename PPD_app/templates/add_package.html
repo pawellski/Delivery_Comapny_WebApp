@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>P&P Delivery</title>
+        <meta charset="utf-8">
+        <link href="styles/style_2.css" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Cambay&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <header>
+            <img class="logo" src="images/logo.png" alt="logo">
+            <h1>POST&PARCEL DELIVERY</h1>
+            <nav>
+                <ul>
+                    <li><a href="/user_homepage">MOJE PACZKI</a></li>
+		            <li><a href="/add_package">NADAJ PACZKĘ</a></li>
+		            <li><a href="/logout">WYLOGUJ</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="main-container">
+
+            <h2>Nadaj nową paczkę</h2>
+
+            <form id="add-package-form" class="add-package-form">
+
+                <h3>Dane nadawcy</h3>
+                <hr>
+
+                <div class="form-row">
+                    <label for="sender_name" class="required">Imię</label>
+                    <input id="sender_name" type="text" name="sender_name" placeholder="Imię"/>
+                    <label for="sender_surname" class="required">Nazwisko</label>
+                    <input id="sender_surname" type="text" name="sender_surname" placeholder="Nazwisko"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="sender_street" class="required">Ulica</label>
+                    <input id="sender_street" type="text" name="sender_street" placeholder="Ulica"/>
+                    <label for="sender_number" class="required">Numer</label>
+                    <input id="sender_number" type="text" name="sender_number" placeholder="Numer"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="sender_postal_code" class="required">Kod pocztowy</label>
+                    <input id="sender_postal_code" type="text" name="sender_postal_code" placeholder="DD-DDD"/>
+                    <label for="sender_city" class="required">Miasto</label>
+                    <input id="sender_city" type="text" name="sender_city" placeholder="Miasto"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="sender_country" class="required">Kraj</label>
+                    <input id="sender_country" type="text" name="sender_country" placeholder="Kraj"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="sender_phone_number" class="required">Numer telefonu</label>
+                    <input id="sender_phone_number" type="text" name="sender_phone_number" placeholder="Numer telefonu"/>
+                </div>
+
+                <h3>Dane odbiorcy</h3>
+                <hr>
+
+                <div class="form-row">
+                    <label for="recipient_name" class="required">Imię</label>
+                    <input id="recipient_name" type="text" name="recipient_name" placeholder="Imię "/>
+                    <label for="recipient_surname" class="required">Nazwisko</label>
+                    <input id="recipient_surname" type="text" name="recipient_surname" placeholder="Nazwisko"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="recipient_street" class="required">Ulica</label>
+                    <input id="recipient_street" type="text" name="recipient_street" placeholder="Ulica"/>
+                    <label for="recipient_number" class="required">Numer</label>
+                    <input id="recipient_number" type="text" name="recipient_number" placeholder="Numer"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="recipient_postal_code" class="required">Kod pocztowy</label>
+                    <input id="recipient_postal_code" type="text" name="recipient_postal_code" placeholder="DD-DDD"/>
+                    <label for="recipient_city" class="required">Miasto</label>
+                    <input id="recipient_city" type="text" name="recipient_city" placeholder="Miasto"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="recipient_country" class="required">Kraj</label>
+                    <input id="recipient_country" type="text" name="recipient_country" placeholder="Kraj"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="recipient_phone_number" class="required">Numer telefonu</label>
+                    <input id="recipient_phone_number" type="text" name="recipient_phone_number" placeholder="Numer telefonu"/>
+                </div>
+
+                <h3>Paczka</h3>
+                <hr>
+
+                <div class="form-row">
+                    <label for="package_image" class="required">Zdjęcie paczki</label>
+                    <input id="button-package-image" type="file" name="button-package-image" accept="image/png, image/jpeg, image/jpg"/>
+                </div>
+
+                
+
+                <div class="form-row">
+                    <input id="button-add-package-form" type="submit" value="Nadaj paczkę"/>
+                </div>
+
+            </form>
+        </div>
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Paweł Skiba</p>
+            <p class="footer-inline right">proudly powered by Vim</p>
+        </footer>
+    </body>
+</html>

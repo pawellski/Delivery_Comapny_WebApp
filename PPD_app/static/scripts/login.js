@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         fetch(loginUrl, loginParams)
             .then(response => getLoginResponseData(response))
+            .then(response => displayInConsoleCorrectResponse(response))
             .catch(err => {
                 console.log("Caught error: " + err);
             });
@@ -42,17 +43,39 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let status = response.status;
 
         if(status == HTTP_STATUS.OK || HTTP_STATUS.NOT_FOUND) {
-            if(status == HTTP_STATUS.OK ) {
-                console.log("Logged in correctly.")
-            } else {
-                console.log("Wrong login or password.")
-            }
+            return response.json()
         } else {
             console.error("Response status code: " + response.status);
             throw "Unexcepted response status: " + response.status;
         }
     }
 
+    function displayInConsoleCorrectResponse(correctResponse) {
+        let status = correctResponse.login;
+        console.log("Status: " + status)
+
+        if(status == "Ok") {
+            window.location.href = "/user_homepage";
+        } else {
+            showWarningMessage();
+        }
+
+        function showWarningMessage() {
+            let warningField = document.getElementById("loginWarning");
+            let currentElem = document.getElementById(BUTTON_ID);
+
+            if(warningField === null) {
+                let textMessage = document.createTextNode("Niepoprawne dane!");
+                warningField = document.createElement('span');
+
+                warningField.setAttribute("id", "loginWarning");
+                warningField.className = "warning-field";
+                warningField.appendChild(textMessage);
+                currentElem.insertAdjacentElement('afterend', warningField)
+            }
+            
+        }
+    }
 
 
 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, make_response
+from flask import Flask, render_template, make_response, abort
 from flask import request, jsonify, redirect, url_for
 import hashlib, uuid
 import logging
@@ -6,6 +6,7 @@ import redis
 
 GET = "GET"
 POST = "POST"
+SESSION_ID = "session-id"
 users = "users"
 sessions = "sessions"
 
@@ -58,14 +59,12 @@ def login():
         if db.sismember(users, login):
             if db.hget(login, "password") == password:
                 log.debug("zalogowano!")
-                name_hash = hashlib.sha512(login).hexdigest()
-                session_id = str(uuid.uuid4())
-                log.debug(session_id)
-                db.hset(sessions, session_id.encode("utf-8"), name_hash.encode("utf-8"))
+                session_uuid = str(uuid.uuid4())
+                log.debug(session_uuid)
+                db.hset(sessions, session_uuid.encode("utf-8"), login)
                 log.debug(db.hgetall(sessions))
-                response = make_response(render_template("user_homepage.html"))
-                response.set_cookie(session_id, name_hash,
-                                    max_age=30, secure=True, httponly=True)
+                response = make_response(jsonify({"login": "Ok"}), 200)
+                response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
                 return response
 
         return jsonify({"login": "Reject"}), 400
@@ -83,9 +82,53 @@ def check_user(user):
 
 @app.route("/user_homepage", methods=[GET])
 def user_homepage():
-    return render_template("user_homepage.html")
-    
+    cookie = request.cookies.get(SESSION_ID)
+    if cookie is not None:
+        if db.hexists(sessions, cookie):
+            login = db.hget(sessions, cookie)
+            log.debug(db.hgetall(sessions))
+            db.hdel(sessions, cookie)
+            session_uuid = str(uuid.uuid4())
+            db.hset(sessions, session_uuid.encode("utf-8"), login)
+            log.debug(db.hgetall(sessions))
+            response = make_response(render_template("user_homepage.html"))
+            response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
+            return response
+        else:
+            abort(401)
+    else:
+        abort(401)
 
+@app.route("/logout", methods=[GET])
+def logout():
+    cookie = request.cookies.get(SESSION_ID)
+    log.debug(cookie)
+    if cookie is not None:
+        db.hdel(sessions, cookie)
+        log.debug(db.hgetall(sessions))
+    
+    return render_template("index.html")
+
+@app.route("/add_package",methods=[GET, POST])
+def add_package():
+    cookie = request.cookies.get(SESSION_ID)
+    if cookie is not None:
+        if db.hexists(sessions, cookie):
+            login = db.hget(sessions, cookie)
+            log.debug(db.hgetall(sessions))
+            db.hdel(sessions, cookie)
+            session_uuid = str(uuid.uuid4())
+            db.hset(sessions, session_uuid.encode("utf-8"), login)
+            log.debug(db.hgetall(sessions))
+            response = make_response(render_template("add_package.html"))
+            response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
+            return response
+        else:
+            abort(401)
+    else:
+        abort(401)
+
+    
 def registration_validation(form):
     errors = {}
     if form.get("name").encode("utf-8").isalpha() == False:
