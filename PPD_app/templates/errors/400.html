@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>400</title>
+        <meta charset="utf-8">
+        <link href="styles/style_1.css" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Cambay&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <header>
+            <img class="logo" src="images/logo.png" alt="logo">
+            <h1 class="h1-title">POST&PARCEL DELIVERY</h1>
+        </header>
+        <section>
+            <h1>400!</h1>
+            <p>
+                Serwer nie jest w stanie przetworzyć Twojego żądania.
+                <a href="{{url_for(index)}}">Przejdź do strony głównej!</a>
+            </p>
+            <p>
+                <strong>Szczegóły błędu</strong>
+                {{error}}
+            </p>
+        </section>
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Paweł Skiba</p>
+            <p class="footer-inline right">proudly powered by Vim</p>
+        </footer>
+    </body>
+</html>
