@@ -20,7 +20,7 @@ section {
     margin-top: 50px;
 }
 
-h1 {
+.h1-title {
     position: fixed;
     float: left;
     text-align: center;
@@ -44,7 +44,7 @@ li {
     padding: 15px 30px;
 }
 
-a {
+.a-title {
     text-align: center;
     color: #000000;
     text-decoration: none;
