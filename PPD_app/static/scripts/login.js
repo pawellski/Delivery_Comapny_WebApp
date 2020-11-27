@@ -55,27 +55,28 @@ document.addEventListener('DOMContentLoaded', function (event) {
         console.log("Status: " + status)
 
         if(status == "Ok") {
+            window.localStorage.setItem("access_token", correctResponse.access_token);
             window.location.href = "/user_homepage";
         } else {
             showWarningMessage();
         }
-
-        function showWarningMessage() {
-            let warningField = document.getElementById("loginWarning");
-            let currentElem = document.getElementById(BUTTON_ID);
-
-            if(warningField === null) {
-                let textMessage = document.createTextNode("Niepoprawne dane!");
-                warningField = document.createElement('span');
-
-                warningField.setAttribute("id", "loginWarning");
-                warningField.className = "warning-field";
-                warningField.appendChild(textMessage);
-                currentElem.insertAdjacentElement('afterend', warningField)
-            }
-            
-        }
     }
+    
+    function showWarningMessage() {
+        let warningField = document.getElementById("loginWarning");
+        let currentElem = document.getElementById(BUTTON_ID);
+
+        if(warningField === null) {
+            let textMessage = document.createTextNode("Niepoprawne dane!");
+            warningField = document.createElement('span');
+            warningField.setAttribute("id", "loginWarning");
+            warningField.className = "warning-field";
+            warningField.appendChild(textMessage);
+            currentElem.insertAdjacentElement('afterend', warningField)
+        }
+        
+    }
+
 
 
 
