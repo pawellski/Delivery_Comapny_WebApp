@@ -1,3 +1,4 @@
-Flask
+flask
 pyopenssl
 redis
+flask-jwt-extended

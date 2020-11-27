@@ -1,17 +1,26 @@
 from flask import Flask, render_template, make_response, abort
 from flask import request, jsonify, redirect, url_for
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 import hashlib, uuid
 import logging
 import redis
+import os
 
 GET = "GET"
 POST = "POST"
 SESSION_ID = "session-id"
 users = "users"
 sessions = "sessions"
+SECRET_KEY = "LOGIN_JWT_SECRET"
+TOKEN_EXPIRES_IN_SECONDS = 120
 
 app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
+
+app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+
+jwt = JWTManager(app)
 
 log = app.logger
 
@@ -53,7 +62,7 @@ def register():
 def login():
     if request.method == POST:
         form = request.form
-        login = form.get("login").encode("utf-8")
+        login = form.get("login")
         password = hashlib.sha512(form.get("password").encode("utf-8")).hexdigest()
 
         if db.sismember(users, login):
@@ -61,9 +70,14 @@ def login():
                 log.debug("zalogowano!")
                 session_uuid = str(uuid.uuid4())
                 log.debug(session_uuid)
-                db.hset(sessions, session_uuid.encode("utf-8"), login)
+                db.hset(sessions, session_uuid.encode("utf-8"), login.encode("utf-8"))
                 log.debug(db.hgetall(sessions))
-                response = make_response(jsonify({"login": "Ok"}), 200)
+                log.debug(login)
+                access_token = create_access_token(identity=login)
+                log.debug(access_token)
+                log.debug(jsonify({"access_token": access_token}))
+                response = make_response(jsonify({"login": "Ok", "access_token": access_token}), 200)
+              
                 response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
                 return response
 
@@ -123,6 +137,19 @@ def add_package():
             response = make_response(render_template("add_package.html"))
             response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
             return response
+        else:
+            abort(401)
+    else:
+        abort(401)
+
+@app.route("/get_token", methods=[GET])
+def get_token():
+    cookie = request.cookies.get(SESSION_ID)
+    if cookie is not None:
+        if db.hexists(sessions, cookie):
+            login = db.hget(sessions, cookie)
+            access_token = create_access_token(identity=login)
+            return jsonify({"access_token": access_token}), 200
         else:
             abort(401)
     else:

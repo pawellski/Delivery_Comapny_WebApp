@@ -8,5 +8,6 @@ services:
     volumes: [./PPD_app:/PPD_app]
     environment:
       FLASK_ENV: development
+      LOGIN_JWT_SECRET: $LOGIN_JWT_SECRET
   redis-db:
     image: "redis:alpine"
