@@ -9,5 +9,14 @@ services:
     environment:
       FLASK_ENV: development
       LOGIN_JWT_SECRET: $LOGIN_JWT_SECRET
+  web-files:
+    build:
+     context: .
+     dockerfile: ./Docker/files/Dockerfile
+    ports: ["8081:8881"]
+    volumes: [./PPD_app:/PPD_app]
+    environment:
+      FLASK_ENV: development
+      LOGIN_JWT_SECRET: $LOGIN_JWT_SECRET
   redis-db:
     image: "redis:alpine"
