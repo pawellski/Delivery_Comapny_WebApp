@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     const BUTTON_ID = "button-login-form";
 
-    var HTTP_STATUS = {OK: 200, NOT_FOUND: 404};
+    var HTTP_STATUS = {OK: 200, BAD_REQUEST: 400};
 
     let loginForm = document.getElementById("login-form");
 
     loginForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        console.log("LoginFrom submission stopped.");
+        console.log("Login Form submission stopped.");
 
         var n = event.srcElement.length;
         for(var i = 0; i < n; i++) {
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function getLoginResponseData(response) {
         let status = response.status;
 
-        if(status == HTTP_STATUS.OK || HTTP_STATUS.NOT_FOUND) {
+        if(status === HTTP_STATUS.OK || status === HTTP_STATUS.BAD_REQUEST) {
             return response.json()
         } else {
             console.error("Response status code: " + response.status);

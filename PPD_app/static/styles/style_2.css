@@ -134,7 +134,7 @@ label{
 #button-add-package-form{
     margin-top: 30px;
     margin-left: 400px;
-    margin-right: 400px;
+    margin-right: 20px;
     padding: 15px;
     min-width: 224px;
     font-size: 20px;
@@ -175,6 +175,6 @@ hr {
     color: red;
 }
 
-#registerMessage {
-	color: black;
+#registerMessage, #informationMessage {
+	color: green;
 }
