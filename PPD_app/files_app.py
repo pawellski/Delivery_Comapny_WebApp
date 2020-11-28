@@ -68,6 +68,14 @@ def add_package():
     else:
         return jsonify({"add_package": "Incorrect"}), 400
 
+@app.route("/get_packages", methods=[GET])
+@jwt_required
+def get_packages():
+    login = get_jwt_identity()
+    waybills_login = "waybills_" + login
+    packages = db.hgetall(waybills_login)
+    return jsonify(packages), 200
+
 
 def add_package_validation(form):
     errors = 0
