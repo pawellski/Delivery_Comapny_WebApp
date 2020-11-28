@@ -29,7 +29,11 @@ section {
     font-size: 1.4vw;
 }
 
-h2 {
+.h1-center {
+    text-align: center;
+}
+
+.h2-center {
     text-align: center;
 }
 
@@ -177,4 +181,35 @@ hr {
 
 #registerMessage, #informationMessage {
 	color: green;
+}
+
+table {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;
+}
+
+td {
+    border: 2px solid black;
+    padding-left: 10px;
+}
+
+tr {
+    background-color: white;
+    transition: 0.1s;
+}
+
+tr:hover {
+    background-color: lightgray;
+}
+
+
+thead tr {
+    background-color: burlywood !important;
+}
+
+thead {
+    text-align: center;
+    font-weight: bold;
 }

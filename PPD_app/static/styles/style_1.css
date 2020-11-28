@@ -79,6 +79,7 @@ a:hover {
 
 .color-table td {
     border: 2px solid black;
+    padding-left: 10px;
 }
 
 .color-table tr:nth-child(odd) {
