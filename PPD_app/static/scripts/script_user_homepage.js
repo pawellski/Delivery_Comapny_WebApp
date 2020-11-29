@@ -62,7 +62,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 var cell3 = document.createElement("td");
                 var text3 = document.createTextNode("Pobierz");
                 var aElem = document.createElement("a");
-                aElem.setAttribute("href", Object.keys(response)[i]);
+                var token = window.localStorage.getItem("access_token");
+                var link = downloadURL + "/" + Object.keys(response)[i] + "?token=" + token;
+                aElem.setAttribute("href", link);
                 aElem.appendChild(text3);
                 cell3.appendChild(aElem);
                 row.appendChild(cell3);
