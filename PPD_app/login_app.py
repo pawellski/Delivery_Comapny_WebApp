@@ -35,7 +35,7 @@ def register():
         login = form.get("login").encode("utf-8")
 
         errors = registration_validation(form)
-        log.debug(errors)
+        log.debug("ERRORS: " + errors)
         if len(errors) == 0:
             db.sadd(users, login)
 
@@ -67,17 +67,13 @@ def login():
 
         if db.sismember(users, login):
             if db.hget(login, "password") == password:
-                log.debug("zalogowano!")
                 session_uuid = str(uuid.uuid4())
-                log.debug(session_uuid)
+                log.debug("Login user: " + login)
+                log.debug("SESSION ID: " + session_uuid)
                 db.hset(sessions, session_uuid.encode("utf-8"), login.encode("utf-8"))
                 log.debug(db.hgetall(sessions))
-                log.debug(login)
                 access_token = create_access_token(identity=login)
-                log.debug(access_token)
-                log.debug(jsonify({"access_token": access_token}))
                 response = make_response(jsonify({"login": "Ok", "access_token": access_token}), 200)
-              
                 response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
                 return response
 
@@ -100,11 +96,9 @@ def user_homepage():
     if cookie is not None:
         if db.hexists(sessions, cookie):
             login = db.hget(sessions, cookie)
-            log.debug(db.hgetall(sessions))
             db.hdel(sessions, cookie)
             session_uuid = str(uuid.uuid4())
             db.hset(sessions, session_uuid.encode("utf-8"), login)
-            log.debug(db.hgetall(sessions))
             response = make_response(render_template("user_homepage.html"))
             response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
             return response
@@ -129,11 +123,9 @@ def add_package():
     if cookie is not None:
         if db.hexists(sessions, cookie):
             login = db.hget(sessions, cookie)
-            log.debug(db.hgetall(sessions))
             db.hdel(sessions, cookie)
             session_uuid = str(uuid.uuid4())
             db.hset(sessions, session_uuid.encode("utf-8"), login)
-            log.debug(db.hgetall(sessions))
             response = make_response(render_template("add_package.html"))
             response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
             return response

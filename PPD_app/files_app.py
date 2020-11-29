@@ -92,7 +92,7 @@ def download_waybill(waybill_hash):
     if token is None:
         abort(401)
     
-    if not valid(token):
+    if not valid(token, waybill_hash):
         abort(401)
 
     filename = waybill_hash + ".pdf"
@@ -161,13 +161,18 @@ def create_and_save_file(waybill_hash):
     db.hset(waybill_hash, PATH_AND_FILENAME, filepath)
     return filepath
 
-def valid(token):
+def valid(token, waybill_hash):
     try:
-        decode(token, os.environ.get(SECRET_KEY))
+        token_json = decode(token, os.environ.get(SECRET_KEY))
     except InvalidTokenError as e:
         log.error(str(e))
         return False
-    return True
+    waybills_login = "waybills_" + token_json['identity']
+    if db.hexists(waybills_login, waybill_hash):
+        log.debug("Token and identity valid!")
+        return True
+        log.debug("Token identity invalid!")
+    return False
 
 def save_file(file_to_save, unique_id):
     if len(file_to_save.filename) > 0:
