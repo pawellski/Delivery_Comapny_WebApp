@@ -35,7 +35,8 @@ def register():
         login = form.get("login").encode("utf-8")
 
         errors = registration_validation(form)
-        log.debug("ERRORS: " + errors)
+        log.debug("ERRORS")
+        log.debug(errors)
         if len(errors) == 0:
             db.sadd(users, login)
 
@@ -68,8 +69,10 @@ def login():
         if db.sismember(users, login):
             if db.hget(login, "password") == password:
                 session_uuid = str(uuid.uuid4())
-                log.debug("Login user: " + login)
-                log.debug("SESSION ID: " + session_uuid)
+                log.debug("Login user")
+                log.debug(login)
+                log.debug("SESSION ID")
+                log.debug(session_uuid)
                 db.hset(sessions, session_uuid.encode("utf-8"), login.encode("utf-8"))
                 log.debug(db.hgetall(sessions))
                 access_token = create_access_token(identity=login)

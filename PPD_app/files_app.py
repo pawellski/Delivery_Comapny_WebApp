@@ -86,8 +86,10 @@ def get_packages():
 @app.route("/waybill/<string:waybill_hash>", methods=[GET])
 def download_waybill(waybill_hash):
     token = request.headers.get('token') or request.args.get('token')
-    log.debug("TOKEN " + token)
-    log.debug("WAYBILL_HASH" + waybill_hash)
+    log.debug("TOKEN")
+    log.debug(token)
+    log.debug("WAYBILL_HASH")
+    log.debug(waybill_hash)
 
     if token is None:
         abort(401)
