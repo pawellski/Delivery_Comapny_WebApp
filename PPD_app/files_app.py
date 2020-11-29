@@ -93,7 +93,7 @@ def download_waybill(waybill_hash):
         abort(401)
     
     if not valid(token, waybill_hash):
-        abort(401)
+        abort(403)
 
     filename = waybill_hash + ".pdf"
 
@@ -157,7 +157,7 @@ def to_recipient_address(filename):
 
 def create_and_save_file(waybill_hash):
     waybill = to_waybill(waybill_hash)
-    filepath = waybill.generate_and_save(FILES_PATH)
+    filepath = waybill.generate_and_save(FILES_PATH, IMAGES_PATH)
     db.hset(waybill_hash, PATH_AND_FILENAME, filepath)
     return filepath
 

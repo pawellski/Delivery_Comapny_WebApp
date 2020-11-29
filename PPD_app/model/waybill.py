@@ -8,18 +8,18 @@ class Waybill:
         self.__sender = sender
         self.__recipient = recipient
     
-    def generate_and_save(self, path="./"):
+    def generate_and_save(self, path="./", image_path="./"):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=12)
-        self.__add_table_to_pdf(pdf)
+        self.__add_table_to_pdf(pdf, image_path)
         
         filename = self.__create_filename(path)
         pdf.output(filename)
 
         return filename
 
-    def __add_table_to_pdf(self, pdf):
+    def __add_table_to_pdf(self, pdf, image_path):
         n_cols = 2
         col_width = (pdf.w - pdf.l_margin - pdf.r_margin) / n_cols
         font_size = pdf.font_size
@@ -30,7 +30,7 @@ class Waybill:
         pdf.ln(0)
         pdf.cell(col_width, n_lines * font_size, "Adresat", border=1)
         pdf.multi_cell(col_width, font_size, txt=self.__recipient.str_full(), border=1)
-        image_name = "waybill_images/" + self.__id + ".png"
+        image_name = image_path + self.__id + ".png"
         if os.path.isfile(image_name):
             x = (pdf.w / 2) - 50
             pdf.image(image_name, x, y = 75, w = 100, h = 100)
