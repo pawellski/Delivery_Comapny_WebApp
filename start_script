@@ -8,3 +8,4 @@ b=$(openssl rand -base64 32)
 touch .env
 echo "${a}${b}" > .env
 
+sudo docker-compose up --build
