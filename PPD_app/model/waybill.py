@@ -11,6 +11,9 @@ class Waybill:
     def generate_and_save(self, path="./", image_path="./"):
         pdf = FPDF()
         pdf.add_page()
+        pdf.set_font("Arial", "B", size=16)
+        pdf.cell(0, 10, self.__id, 0, 0, 'C');
+        pdf.set_y(25)
         pdf.set_font("Arial", size=12)
         self.__add_table_to_pdf(pdf, image_path)
         
