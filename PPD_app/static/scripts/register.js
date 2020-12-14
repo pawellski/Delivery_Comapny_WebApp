@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     });
 
     function submitRegisterForm() {
-        let registerUrl = URL + "register";
+        let registerUrl = URL + "register/";
 
         let registerParams = {
             method: POST,

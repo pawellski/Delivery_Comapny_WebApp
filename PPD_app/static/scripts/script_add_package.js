@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     
-    var tokenURL = "https://localhost:8080/get_token";
-    var packageURL = "https://localhost:8081/add_package";
+    var tokenURL = "https://localhost:8080/token/";
+    var packageURL = "https://localhost:8081/add_package/";
     
     var GET = "GET";
     var POST = "POST";

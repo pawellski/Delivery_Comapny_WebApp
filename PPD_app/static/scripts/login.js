@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function (event) {
 
     const POST = "POST"
-    const loginUrl = "https://localhost:8080/login"
+    const loginUrl = "https://localhost:8080/login/"
 
     const BUTTON_ID = "button-login-form";
 

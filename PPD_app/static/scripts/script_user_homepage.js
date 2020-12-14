@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     var HTTP_STATUS = {OK: 200};
-    var tokenURL = "https://localhost:8080/get_token";
-    var packagesURL = "https://localhost:8081/get_packages";
-    var downloadURL = "https://localhost:8081/waybill";
+    var tokenURL = "https://localhost:8080/token/";
+    var packagesURL = "https://localhost:8081/packages/";
+    var downloadURL = "https://localhost:8081/waybill/";
     var GET = "GET";
 
     getToken();
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 var text3 = document.createTextNode("Pobierz");
                 var aElem = document.createElement("a");
                 var token = window.localStorage.getItem("access_token");
-                var link = downloadURL + "/" + Object.keys(response)[i] + "?token=" + token;
+                var link = downloadURL + Object.keys(response)[i] + "?token=" + token;
                 aElem.setAttribute("href", link);
                 aElem.appendChild(text3);
                 cell3.appendChild(aElem);
