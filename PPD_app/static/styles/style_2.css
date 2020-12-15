@@ -184,7 +184,7 @@ hr {
 }
 
 table {
-    width: 800px;
+    width: 1000px;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 50px;
@@ -193,6 +193,7 @@ table {
 td {
     border: 2px solid black;
     padding-left: 10px;
+    padding-right: 10px;
 }
 
 tr {
@@ -212,4 +213,10 @@ thead tr {
 thead {
     text-align: center;
     font-weight: bold;
+}
+
+.remove-button {
+    background-color: papayawhip;
+    width: 100%;
+    border-radius: 3px;
 }

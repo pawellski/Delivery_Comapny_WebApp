@@ -10,6 +10,7 @@ import uuid
 import logging
 import redis
 import os
+import json
 
 app = Flask(__name__)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
@@ -19,6 +20,7 @@ home_namespace = api_app.namespace("home", description = "Home API")
 add_package_namespace = api_app.namespace("add_package", description = "Add package API")
 packages_namespace = api_app.namespace("packages", description = "Packages API")
 waybill_namespace = api_app.namespace("waybill", description = "Waybill API")
+remove_package_namespace = api_app.namespace("remove_package", description = "Remove package API")
 
 waybills = "waybills"
 SECRET_KEY = "LOGIN_JWT_SECRET"
@@ -27,6 +29,7 @@ IMAGES_PATH = "waybill_images/"
 PATH_AND_FILENAME = "path_and_filename"
 PATH_AND_IMAGE = "path_and_image"
 TOKEN_EXPIRES_IN_SECONDS = 120
+NEW = "Nowa"
 
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
@@ -80,7 +83,7 @@ class AddPackage(Resource):
             now_string = now.strftime("%d/%m/%Y %H:%M:%S")
             unique_id = uuid.uuid4().hex.encode("utf-8")
 
-            db.hset(waybills_login.encode("utf-8"), unique_id, now_string.encode("utf-8"))
+            db.sadd(waybills_login.encode("utf-8"), unique_id)
 
             db.hset(unique_id, "sender_name", form.get("sender_name").encode("utf-8"))
             db.hset(unique_id, "sender_surname", form.get("sender_surname").encode("utf-8"))
@@ -100,16 +103,21 @@ class AddPackage(Resource):
             db.hset(unique_id, "recipient_country", form.get("recipient_country").encode("utf-8"))
             db.hset(unique_id, "recipient_phone_number", form.get("recipient_phone_number").encode("utf-8"))
 
+            db.hset(unique_id, "date", now_string.encode("utf-8"))
+            db.hset(unique_id, "status", NEW)
+
             new_filename = self.save_file(request.files["package_image"], unique_id.decode("utf-8"))
             if(new_filename != "Empty content of image!"):
-                db.hset(unique_id, PATH_AND_IMAGE, new_filename)
+                path_to_image = IMAGES_PATH + new_filename
+                db.hset(unique_id, PATH_AND_IMAGE, path_to_image)            
             log.debug(db.hgetall(unique_id))
+            log.debug(db.smembers(waybills_login))
             response = make_response({"add_package": "Correct"}, 200)
             return response
                     
         else:
             return {"add_package": "Incorrect"}, 400
-    
+
 
     def add_package_validation(self, form):
         errors = 0
@@ -168,8 +176,16 @@ class Packages(Resource):
     def get(self):
         login = get_jwt_identity()
         waybills_login = "waybills_" + login
-        packages = db.hgetall(waybills_login)
-        return packages, 200
+        packages = []
+        for id in db.smembers(waybills_login.encode("utf-8")):
+            date = db.hget(id, "date")
+            status = db.hget(id, "status")
+            p = {"id": id, "date": date, "status": status}
+            packages.append(p)
+        log.debug(db.smembers(waybills_login))
+        packages_json = json.dumps(packages)
+
+        return packages_json, 200
 
 @waybill_namespace.route("/<string:waybill_hash>")
 class Waybills(Resource):
@@ -217,7 +233,7 @@ class Waybills(Resource):
             log.error(str(e))
             return False
         waybills_login = "waybills_" + token_json['identity']
-        if db.hexists(waybills_login, waybill_hash):
+        if db.sismember(waybills_login, waybill_hash):
             log.debug("Token and identity valid!")
             return True
         log.debug("Token identity invalid!")
@@ -264,7 +280,45 @@ class Waybills(Resource):
         recipient_city = db.hget(filename, "recipient_city")
         recipient_country = db.hget(filename, "recipient_country")
         return Address(recipient_street, recipient_number, recipient_postal_code, recipient_city, recipient_country)
-        
+
+@remove_package_namespace.route("/<string:waybill_hash>")
+class RemovePackage(Resource):
+    
+    @jwt_required
+    @api_app.doc(responses = {204: "", 400: "Remove package: Incorrect"})
+    def delete(self, waybill_hash):
+        login = get_jwt_identity()
+        log.debug(login)
+        waybills_login = "waybills_" + login
+        if db.sismember(waybills_login.encode("utf-8"), waybill_hash.encode("utf-8")):
+            if db.hexists(waybill_hash.encode("utf-8"), PATH_AND_IMAGE):
+                waybill_image = db.hget(waybill_hash.encode("utf-8"), PATH_AND_IMAGE)
+            else:
+                waybill_image = ""
+
+            if db.hexists(waybill_hash.encode("utf-8"), PATH_AND_FILENAME):
+                waybill_file = db.hget(waybill_hash.encode("utf-8"), PATH_AND_FILENAME)
+            else:
+                waybill_file = ""
+
+            db.srem(waybills_login.encode("utf-8"), waybill_hash.encode("utf-8"))
+            db.delete(waybill_hash.encode("utf-8"))
+            
+            if os.path.isfile(waybill_file):
+                try:
+                    os.remove(waybill_file)
+                except Exception as e:
+                    log.error(e)
+            if os.path.isfile(waybill_image):
+                try:
+                    os.remove(waybill_image)
+                except Exception as e:
+                    log.error(e)
+            
+            return 204
+        else:
+            return {"Remove package": "Incorrect"}, 400
+
 @app.errorhandler(400)
 def handle_unauthorized(error):
     return make_response(render_template("/errors/400.html"), 400)
