@@ -206,10 +206,11 @@ class PackageList(Resource):
             if start == count:
                 start = start - limit
 
-            for i in range(start, start + limit):
-                if i < count:
-                    p = self.get_package_json(packages_id[i])
-                    packages.append(p)
+            if count != 0:
+                for i in range(start, start + limit):
+                    if i < count:
+                        p = self.get_package_json(packages_id[i])
+                        packages.append(p)
             
             if start < 1:
                 previous = 0
