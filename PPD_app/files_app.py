@@ -30,6 +30,7 @@ PATH_AND_FILENAME = "path_and_filename"
 PATH_AND_IMAGE = "path_and_image"
 TOKEN_EXPIRES_IN_SECONDS = 120
 NEW = "Nowa"
+START = "start"
 
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
@@ -186,6 +187,55 @@ class Packages(Resource):
         packages_json = json.dumps(packages)
 
         return packages_json, 200
+    
+@packages_namespace.route("/list/<int:start>")
+class PackageList(Resource):
+    
+    @api_app.doc(responses = {200: "packages, previous, next", 400: "Start is incorrect", 401: "Unauthorized"})
+    @jwt_required
+    def get(self, start):
+        login = get_jwt_identity()
+        waybills_login = "waybills_" + login
+                    
+        packages_id = list(db.smembers(waybills_login))
+        count = len(packages_id)
+        packages = []
+        limit = 5
+        
+        if start <= count:
+            if start == count:
+                start = start - limit
+
+            for i in range(start, start + limit):
+                if i < count:
+                    p = self.get_package_json(packages_id[i])
+                    packages.append(p)
+            
+            if start < 1:
+                previous = 0
+            else:
+                previous = start - limit
+            
+            if start + limit > count:
+                next = start
+            else:
+                next = start + limit
+            
+            message = {"packages": packages, "previous": previous, "next": next, "numberOfPackages": count}
+            log.debug(message['packages'])
+            message_json = json.dumps(message)
+            return message_json, 200
+
+        else:
+            return "Start is incorrect", 400
+
+    def get_package_json(self, waybill_hash):
+        date = db.hget(waybill_hash, "date")
+        status = db.hget(waybill_hash, "status")
+        package_info = {"id": waybill_hash, "date": date, "status": status}
+        return package_info
+
+
 
 @waybill_namespace.route("/<string:waybill_hash>")
 class Waybills(Resource):
