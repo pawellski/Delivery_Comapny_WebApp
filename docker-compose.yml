@@ -18,5 +18,13 @@ services:
     environment:
       FLASK_ENV: development
       LOGIN_JWT_SECRET: $LOGIN_JWT_SECRET
+  web-plocker:
+    build:
+     context: .
+     dockerfile: ./Docker/parcel_locker/Dockerfile
+    ports: ["8082:8882"]
+    volumes: [./PPD_app:/PPD_app]
+    environment:
+      FLASK_ENV: development
   redis-db:
     image: "redis:alpine"
