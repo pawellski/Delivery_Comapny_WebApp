@@ -3,8 +3,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var tokenURL = "https://localhost:8080/token/";
     var packagesURL = "https://localhost:8081/packages/list/";
     var packages0URL = "https://localhost:8081/packages/list/0";
-    var downloadURL = "https://localhost:8081/waybill/";
-    var removeURL = "https://localhost:8081/remove_package/"
+    var packageURL = "https://localhost:8081/package/"
     var GET = "GET";
     var DELETE = "DELETE";
 
@@ -82,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                     var text4 = document.createTextNode("Pobierz");
                     var aElem = document.createElement("a");
                     var token = window.localStorage.getItem("access_token");
-                    var link = downloadURL + response.packages[i].id + "?token=" + token;
+                    var link = packageURL + response.packages[i].id + "?token=" + token;
                     aElem.setAttribute("href", link);
                     aElem.appendChild(text4);
                     cell4.appendChild(aElem);
@@ -97,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                         removeButton.addEventListener("click", function(e) {
                             var id = e.currentTarget.parentNode.parentNode.children[0].textContent
                             let token = "Bearer " + window.localStorage.getItem("access_token");
-                            let removePackageURL = removeURL + id;
+                            let removePackageURL = packageURL + id;
                             
                             let removePackageParams = {
                                 method: DELETE,

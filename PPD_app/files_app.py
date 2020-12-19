@@ -19,8 +19,7 @@ api_app = Api(app = app, version = "0.1", title = "Files App API", description =
 home_namespace = api_app.namespace("home", description = "Home API")
 add_package_namespace = api_app.namespace("add_package", description = "Add package API")
 packages_namespace = api_app.namespace("packages", description = "Packages API")
-waybill_namespace = api_app.namespace("waybill", description = "Waybill API")
-remove_package_namespace = api_app.namespace("remove_package", description = "Remove package API")
+package_namespace = api_app.namespace("package", description = "Package API")
 
 waybills = "waybills"
 SECRET_KEY = "LOGIN_JWT_SECRET"
@@ -168,25 +167,6 @@ class AddPackage(Resource):
             return file_to_save.filename
         else:
             return "Empty content of image!"
-
-@packages_namespace.route("/")
-class Packages(Resource):
-
-    @api_app.doc(responses = {200: "packages"})
-    @jwt_required
-    def get(self):
-        login = get_jwt_identity()
-        waybills_login = "waybills_" + login
-        packages = []
-        for id in db.smembers(waybills_login.encode("utf-8")):
-            date = db.hget(id, "date")
-            status = db.hget(id, "status")
-            p = {"id": id, "date": date, "status": status}
-            packages.append(p)
-        log.debug(db.smembers(waybills_login))
-        packages_json = json.dumps(packages)
-
-        return packages_json, 200
     
 @packages_namespace.route("/list/<int:start>")
 class PackageList(Resource):
@@ -238,8 +218,8 @@ class PackageList(Resource):
 
 
 
-@waybill_namespace.route("/<string:waybill_hash>")
-class Waybills(Resource):
+@package_namespace.route("/<string:waybill_hash>")
+class Package(Resource):
 
     @api_app.doc(responses = {200: "File", 401: "You are unathorized", 403: "File is forbidden"})
     def get(self, waybill_hash):
@@ -276,6 +256,41 @@ class Waybills(Resource):
                 return send_file(filepath, as_attachment=True)
             except Exception as e:
                 log.error(e)
+        
+    @jwt_required
+    @api_app.doc(responses = {204: "", 400: "Remove package: Incorrect"})
+    def delete(self, waybill_hash):
+        login = get_jwt_identity()
+        log.debug(login)
+        waybills_login = "waybills_" + login
+        if db.sismember(waybills_login.encode("utf-8"), waybill_hash.encode("utf-8")):
+            if db.hexists(waybill_hash.encode("utf-8"), PATH_AND_IMAGE):
+                waybill_image = db.hget(waybill_hash.encode("utf-8"), PATH_AND_IMAGE)
+            else:
+                waybill_image = ""
+
+            if db.hexists(waybill_hash.encode("utf-8"), PATH_AND_FILENAME):
+                waybill_file = db.hget(waybill_hash.encode("utf-8"), PATH_AND_FILENAME)
+            else:
+                waybill_file = ""
+
+            db.srem(waybills_login.encode("utf-8"), waybill_hash.encode("utf-8"))
+            db.delete(waybill_hash.encode("utf-8"))
+            
+            if os.path.isfile(waybill_file):
+                try:
+                    os.remove(waybill_file)
+                except Exception as e:
+                    log.error(e)
+            if os.path.isfile(waybill_image):
+                try:
+                    os.remove(waybill_image)
+                except Exception as e:
+                    log.error(e)
+            
+            return 204
+        else:
+            return {"Remove package": "Incorrect"}, 400
 
     def valid(self, token, waybill_hash):
         try:
@@ -331,44 +346,6 @@ class Waybills(Resource):
         recipient_city = db.hget(filename, "recipient_city")
         recipient_country = db.hget(filename, "recipient_country")
         return Address(recipient_street, recipient_number, recipient_postal_code, recipient_city, recipient_country)
-
-@remove_package_namespace.route("/<string:waybill_hash>")
-class RemovePackage(Resource):
-    
-    @jwt_required
-    @api_app.doc(responses = {204: "", 400: "Remove package: Incorrect"})
-    def delete(self, waybill_hash):
-        login = get_jwt_identity()
-        log.debug(login)
-        waybills_login = "waybills_" + login
-        if db.sismember(waybills_login.encode("utf-8"), waybill_hash.encode("utf-8")):
-            if db.hexists(waybill_hash.encode("utf-8"), PATH_AND_IMAGE):
-                waybill_image = db.hget(waybill_hash.encode("utf-8"), PATH_AND_IMAGE)
-            else:
-                waybill_image = ""
-
-            if db.hexists(waybill_hash.encode("utf-8"), PATH_AND_FILENAME):
-                waybill_file = db.hget(waybill_hash.encode("utf-8"), PATH_AND_FILENAME)
-            else:
-                waybill_file = ""
-
-            db.srem(waybills_login.encode("utf-8"), waybill_hash.encode("utf-8"))
-            db.delete(waybill_hash.encode("utf-8"))
-            
-            if os.path.isfile(waybill_file):
-                try:
-                    os.remove(waybill_file)
-                except Exception as e:
-                    log.error(e)
-            if os.path.isfile(waybill_image):
-                try:
-                    os.remove(waybill_image)
-                except Exception as e:
-                    log.error(e)
-            
-            return 204
-        else:
-            return {"Remove package": "Incorrect"}, 400
 
 @app.errorhandler(400)
 def handle_unauthorized(error):
