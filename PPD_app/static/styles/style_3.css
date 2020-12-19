@@ -1,0 +1,47 @@
+a {
+    text-align: center;
+    color: #000000;
+    text-decoration: none;
+    font-family: 'Open Sans', sans-serif;
+}
+
+li {
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+a:hover {
+    color: #FFFFFF;
+    transition: 0.5s;
+}
+
+hr {
+    width: 100%;
+}
+
+img {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+body {
+    background-image: url('/static/images/background_2.png');
+}
+
+.container {
+    margin-top: 100px;
+}
+
+h4 {
+    padding-bottom:20px;
+}
+
+button {
+    color: burlywood;
+}
+
+input {
+    margin-bottom: 20px;
+}
