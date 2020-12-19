@@ -10,7 +10,8 @@ app = Flask(__name__)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 api_app = Api(app = app, version = "0.1", title = "Parcel Locker App API", description = "REST-full API for Parcel Locker")
 
-home_namespace = api_app.namespace("home", description = "Home API")
+user_page_namespace = api_app.namespace("user_page", description = "User Page API")
+courier_page_namespace = api_app.namespace("courier_page", description = "Courier Page API")
 package_namespace = api_app.namespace("package", description = "Place package API")
 
 NEW = "Nowa"
@@ -19,8 +20,8 @@ PARCEL_LOCKERS = "parcel_lockers"
 
 log = app.logger
 
-@home_namespace.route("/")
-class Home(Resource):
+@user_page_namespace.route("/")
+class UserPage(Resource):
 
     @api_app.response(200, "parcel_locker_user.html")
     @api_app.produces(["text/html"])
@@ -42,6 +43,16 @@ class Home(Resource):
             db.sadd(PARCEL_LOCKERS, "PL079")
             db.sadd(PARCEL_LOCKERS, "PL183")
             db.sadd(PARCEL_LOCKERS, "PL271")  
+
+@courier_page_namespace.route("/")
+class CourierPage(Resource):
+
+    @api_app.response(200, "parcel_locker_courier.html")
+    @api_app.produces(["text/html"])
+    def get(self):
+        headers = {'Content-Type': 'text/html'}
+        return make_response(render_template("parcel_locker_courier.html"), 200, headers)
+
 
 @package_namespace.route("/")
 class Package(Resource):
