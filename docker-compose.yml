@@ -26,5 +26,13 @@ services:
     volumes: [./PPD_app:/PPD_app]
     environment:
       FLASK_ENV: development
+  web-courier:
+    build:
+     context: .
+     dockerfile: ./Docker/courier/Dockerfile
+    ports: ["8083:8883"]
+    volumes: [./PPD_app:/PPD_app]
+    environment:
+      FLASK_ENV: development 
   redis-db:
     image: "redis:alpine"
