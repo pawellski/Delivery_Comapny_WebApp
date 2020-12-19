@@ -1,7 +1,7 @@
 FROM python:3.7-alpine
 WORKDIR /PPD_app
 
-ENV FLASK_APP parcel_locker.py
+ENV FLASK_APP parcel_locker_app.py
 ENV FLASK_RUN_HOST 0.0.0.0
 ENV FLASK_RUN_PORT 8882
 
