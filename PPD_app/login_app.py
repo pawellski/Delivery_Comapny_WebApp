@@ -7,7 +7,7 @@ import redis
 import os
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 api_app = Api(app = app, version = "0.1", title = "Login App API", description = "REST-full API for login")
 
