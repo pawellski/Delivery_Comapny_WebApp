@@ -1,0 +1,33 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-bottom: 150px;
+    background-image: url('/static/images/background_2.png');
+    /*background-color: #fff5ee;*/
+}
+
+input {
+    margin-bottom: 20px;
+}
+
+.form-login {
+    width: 100%;
+    max-width: 350px;
+    padding: 20px;
+    margin: auto;
+}
+
+.form-login .form-control {
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+form {
+    background-color: lightgray;
+}
