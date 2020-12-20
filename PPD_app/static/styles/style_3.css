@@ -58,3 +58,27 @@ input {
     margin-top: 40px;
     margin-bottom: 20px;
 }
+
+.hr-border {
+    border: 1px solid black;
+    margin-top: 100px;
+    max-width: 600px;
+}
+
+.h3-head {
+    margin-top: 50px;
+}
+
+#passon-package-form, #get-token-form {
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#alert-div-1, #alert-div-2 {
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
