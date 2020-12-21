@@ -26,6 +26,7 @@ services:
     volumes: [./PPD_app:/PPD_app]
     environment:
       FLASK_ENV: development
+      COURIER_JWT_SECRET: $COURIER_JWT_SECRET
   web-courier:
     build:
      context: .
@@ -33,6 +34,7 @@ services:
     ports: ["8083:8883"]
     volumes: [./PPD_app:/PPD_app]
     environment:
-      FLASK_ENV: development 
+      FLASK_ENV: development
+      COURIER_JWT_SECRET: $COURIER_JWT_SECRET
   redis-db:
     image: "redis:alpine"
