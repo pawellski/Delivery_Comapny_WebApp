@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/styles/style_3.css">
+    <script src="/static/scripts/script_courier_pickup_package.js"></script>
 
     <title>P&P DELIVERY</title>
   </head>
   <body>
       
     <nav class="navbar navbar-expand-lg navbar-light">       
-        <a class="navbar-brand font-weight-bold text-decoration-none" href="https://localhost:8083/login_page/">
+        <a class="navbar-brand font-weight-bold text-decoration-none" href="https://localhost:8083/login/">
             <img src="/static/images/logo.png" alt="Logo" width="50px" height="50px" >
             KURIER
         </a>
@@ -45,10 +46,10 @@
         </div>
     </nav>
     
-    <div class="container ">
+    <div class="container">
+      <h3 class="text-center font-weight-bold h3-head">Paczkomat</h3>
+      <h4 class="text-center">Wprowadź numer paczkomatu</h4>
       <form id="get-token-form">
-        <h3 class="text-center font-weight-bold h3-head">Paczkomat</h3>
-        <h4 class="text-center">Wprowadź numer paczkomatu</h4>
         <input type="text" id="parcel_locker_id" name="parcel_locker_id" class="form-control" placeholder="Numer paczkomatu" required>
         <button id="submit-button" class="btn btn-lg btn-secondary btn-block" type="submit">Pobierz kod</button>
       </form>
@@ -57,9 +58,9 @@
       <div class="container-fluid">
           <hr class="hr-border">
       </div>
+      <h3 class="text-center font-weight-bold h3-head">Odbiór paczki</h4>
+      <h4 class="text-center">Wprowadź numer paczki</h4>
       <form id="passon-package-form">
-        <h3 class="text-center font-weight-bold h3-head">Odbiór paczki</h4>
-        <h4 class="text-center">Wprowadź numer paczki</h4>
         <input type="text" id="package_id" name="package_id" class="form-control" placeholder="Numer paczki" required>
         <button id="submit-button" class="btn btn-lg btn-secondary btn-block" type="submit">Odbierz paczkę</button>
       </form>
