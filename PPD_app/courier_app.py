@@ -19,6 +19,8 @@ log = app.logger
 COURIERS = "couriers"
 SESSION_ID = "session-id"
 COURIER_SESSIONS = "courier-sessions"
+NEW = "Nowa"
+PASSED_ON = "Przekazana"
 
 log = app.logger
 
@@ -115,6 +117,27 @@ class PickupPackage(Resource):
                 response = make_response(render_template("courier_pickup_package.html"), 200, headers)
                 response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
                 return response
+            else:
+                return make_response("Unauthorized", 401)
+        else:
+            return make_response("Unauthorized", 401)
+
+    def post(self):
+        cookie = request.cookies.get(SESSION_ID)
+        if cookie is not None:
+            if db.hexists(COURIER_SESSIONS, cookie):
+                form = request.form
+                package_id = form.get("package_id").encode("utf-8")
+                login = db.hget(COURIER_SESSIONS, cookie)
+                if db.exists(package_id):
+                    if db.hget(package_id, "status") == NEW:
+                        db.hset(package_id, "status", PASSED_ON)
+                        db.sadd(login, package_id)
+                        return make_response("Package is passed on correctly.", 200)
+                    else:
+                        return make_response("Package has not NEW status.", 409)
+                else:
+                   return make_response("Package does not exist.", 400) 
             else:
                 return make_response("Unauthorized", 401)
         else:
