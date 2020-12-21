@@ -5,6 +5,7 @@ from exception.exception import UnauthorizedError, ForbiddenError
 import hashlib, uuid
 import redis
 import os
+import json
 
 app = Flask(__name__)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
@@ -23,6 +24,7 @@ PARCEL_LOCKERS = "parcel_lockers"
 NEW = "Nowa"
 PASSED_ON = "Przekazana"
 SECRET_KEY = "COURIER_JWT_SECRET"
+URL = "https://localhost:8083/packages/list/"
 TOKEN_EXPIRES_IN_SECONDS = 60
 
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
@@ -172,3 +174,52 @@ class Token(Resource):
                 return make_response("Unauthorized", 401)
         else:
             return make_response("Unauthorized", 401)
+
+
+@packages_namespace.route("/list/<int:start>")
+class PackagesList(Resource):
+
+    def get(self, start):
+        cookie = request.cookies.get(SESSION_ID)
+        if cookie is not None and db.hexists(COURIER_SESSIONS, cookie):
+            courier_id = db.hget(COURIER_SESSIONS, cookie)
+            packages_id = list(db.smembers(courier_id.encode("utf-8")))
+            count = len(packages_id)
+
+            packages = []
+
+            limit = 5
+            
+            if start <= count:
+                if start == count:
+                    start = start-limit
+            
+                if count != 0:
+                    for i in range(start, start + limit):
+                        if i < count:
+                            p = self.get_package_json(packages_id[i])
+                            packages.append(p)
+            
+                if start < 1:
+                    previous = URL + "0"
+                else:
+                    previous = URL + str(start - limit)
+            
+                if start + limit > count:
+                    next = URL + str(start)
+                else:
+                    next = URL + str(start + limit)
+
+                message = {"packages": packages, "previous": previous, "next": next, "numberOfPackages": count}
+                message_json = json.dumps(message)
+                return message_json, 200
+
+            else:
+                return make_response("Start is incorrect.", 400)
+
+        else:
+            return make_response("Unauthorized", 401)
+
+    def get_package_json(self, package_id):
+        package_info = {"id": package_id}
+        return package_info
