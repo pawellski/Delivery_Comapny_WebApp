@@ -81,4 +81,5 @@ input {
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    word-break: break-all;
 }

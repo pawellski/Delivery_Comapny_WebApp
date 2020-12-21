@@ -14,14 +14,21 @@ login_namespace = api_app.namespace("login", description = "Login Page API")
 logout_namespace = api_app.namespace("logout", description = "Logout Page API")
 packages_namespace = api_app.namespace("packages", description = "Packages API")
 pickup_package_namespace = api_app.namespace("pickup_package", description = "Pick Up Package API")
+token_namespace = api_app.namespace("token", description = "Token API")
 
-log = app.logger
 COURIERS = "couriers"
 SESSION_ID = "session-id"
 COURIER_SESSIONS = "courier-sessions"
+PARCEL_LOCKERS = "parcel_lockers"
 NEW = "Nowa"
 PASSED_ON = "Przekazana"
+SECRET_KEY = "COURIER_JWT_SECRET"
+TOKEN_EXPIRES_IN_SECONDS = 60
 
+app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+
+jwt = JWTManager(app)
 log = app.logger
 
 @login_namespace.route("/")
@@ -103,6 +110,7 @@ class Packages(Resource):
 
 @pickup_package_namespace.route("/")
 class PickupPackage(Resource):
+    
     @api_app.response(200, "courier_pickup_package.html")
     @api_app.produces(["text/html"])
     def get(self):
@@ -122,6 +130,7 @@ class PickupPackage(Resource):
         else:
             return make_response("Unauthorized", 401)
 
+    api_app.doc(responses = {200: "Package is passed on correctly.", 400: "Package does not exist.", 401: "Unauthorized", 409: "Package has not NEW status."})
     def post(self):
         cookie = request.cookies.get(SESSION_ID)
         if cookie is not None:
@@ -138,6 +147,27 @@ class PickupPackage(Resource):
                         return make_response("Package has not NEW status.", 409)
                 else:
                    return make_response("Package does not exist.", 400) 
+            else:
+                return make_response("Unauthorized", 401)
+        else:
+            return make_response("Unauthorized", 401)
+
+@token_namespace.route("/")
+class Token(Resource):
+
+    api_app.doc(responses = {200: "access_token", 400: "Wrong parcel locker id.", 401: "Unauthorized"})
+    def post(self):
+        form = request.form
+        cookie = request.cookies.get(SESSION_ID)
+        parcel_locker_id = form.get("parcel_locker_id")
+        if cookie is not None:
+            if db.hexists(COURIER_SESSIONS, cookie):
+                if db.sismember(PARCEL_LOCKERS, parcel_locker_id):
+                    login = db.hget(COURIER_SESSIONS, cookie)
+                    access_token = create_access_token(identity=login)
+                    return {"token": "True", "access_token": access_token}, 200
+                else:
+                    return make_response({"token": "False", "message":"Wrong parcel locker id."}, 400)
             else:
                 return make_response("Unauthorized", 401)
         else:
