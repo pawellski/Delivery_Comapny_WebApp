@@ -31,7 +31,7 @@ img {
 }
 
 body {
-    background-image: url('/static/images/background_2.png');
+    background-image: url('../images/background_2.png');
 }
 
 .container {
