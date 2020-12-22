@@ -76,7 +76,7 @@ class Register(Resource):
         return make_response(render_template("registration.html"), 200, headers)
     
     @api_app.expect(parser)
-    @api_app.doc(responses = {200: "registration_status: OK", 400: "errors"})
+    @api_app.doc(responses = {201: "registration_status: OK", 400: "errors"})
     def post(self):
         form = request.form
         login = form.get("login").encode("utf-8")
