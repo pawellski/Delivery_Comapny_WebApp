@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (event) {
 
-    var packageURL = "https://localhost:8082/package/";
+    var packageURL = "https://localhost:8082/put_package/";
     var HTTP_STATUS = {OK: 200, BAD_REQUEST: 400, CONFLICT: 409};
     var POST = "POST";
 
