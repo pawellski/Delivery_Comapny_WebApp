@@ -52,6 +52,7 @@ class Home(Resource):
 class AddPackage(Resource):
     
     parser = reqparse.RequestParser()
+    parser.add_argument("Authorization", required = True, location="headers")
     
     parser.add_argument("sender_name", required = True, type=str, help = "Sender name cannot be blank", location="form")
     parser.add_argument("sender_surname", required = True, type=str, help = "Sender surname cannot be blank", location="form")
@@ -171,6 +172,10 @@ class AddPackage(Resource):
 @packages_namespace.route("/list/<int:start>")
 class PackageList(Resource):
     
+    parser = reqparse.RequestParser()
+    parser.add_argument("Authorization", required = True, location="headers")
+    
+    @api_app.expect(parser)
     @api_app.doc(responses = {200: "packages, previous, next", 400: "Start is incorrect", 401: "Unauthorized"})
     @jwt_required
     def get(self, start):
@@ -221,6 +226,10 @@ class PackageList(Resource):
 @package_namespace.route("/<string:waybill_hash>")
 class Package(Resource):
 
+    parser = reqparse.RequestParser()
+    parser.add_argument("Authorization", required = True, location="headers")
+    
+    @api_app.expect(parser)
     @api_app.doc(responses = {200: "File", 401: "You are unathorized", 403: "File is forbidden"})
     def get(self, waybill_hash):
         token = request.headers.get('token') or request.args.get('token')
@@ -258,6 +267,7 @@ class Package(Resource):
                 log.error(e)
         
     @jwt_required
+    @api_app.expect(parser)
     @api_app.doc(responses = {204: "", 400: "Remove package: Incorrect"})
     def delete(self, waybill_hash):
         login = get_jwt_identity()
