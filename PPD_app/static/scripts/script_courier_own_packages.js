@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    var HTTP_STATUS = {OK: 200, BAD_REQUEST: 400};
+    var HTTP_STATUS = {OK: 200, BAD_REQUEST: 400, UNAUTHORIZED: 401};
     
     var packages0URL = "https://localhost:8083/packages/list/0";
     var GET = "GET";
@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         if (status === HTTP_STATUS.OK || status === HTTP_STATUS.BAD_REQUEST) {
             return response.json()
+        } else if(status === HTTP_STATUS.UNAUTHORIZED) {
+            window.location.href = "/login/";
         } else {
             console.error("Response status code: " + response.status);
             throw "Unexcepted response status: " + response.status;
@@ -33,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function displayTableWithPackages(response) {
         response = JSON.parse(response);
-        console.log(response)
         let packagesElem = document.getElementById("packages");
         let numberOfPackages = response.numberOfPackages;
 

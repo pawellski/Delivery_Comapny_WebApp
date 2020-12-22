@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var pickupPackageURL = "https://localhost:8083/pickup_package/";
     var tokenURL = "https://localhost:8083/token/"
-    var HTTP_STATUS = {OK: 200, BAD_REQUEST: 400, CONFLICT: 409};
+    var HTTP_STATUS = {OK: 200, BAD_REQUEST: 400, UNAUTHORIZED: 401, CONFLICT: 409};
     var POST = "POST";
 
     var passOnPackageForm = document.getElementById("passon-package-form");
@@ -58,9 +58,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function getPassOnPackageResponse(response) {
         let status = response.status;
-
-        if(status === HTTP_STATUS.OK || status === HTTP_STATUS.BAD_REQUEST || HTTP_STATUS.CONFLICT) {
+        console.log(status);
+        if(status === HTTP_STATUS.OK || status === HTTP_STATUS.BAD_REQUEST || status === HTTP_STATUS.CONFLICT) {
             return response.status
+        } else if(status === HTTP_STATUS.UNAUTHORIZED) {
+            console.log("DZIALLLA");
+            window.location.href = "/login/";
         } else {
             console.error("Response status code: " + response.status);
             throw "Unexcepted response status: " + response.status;
@@ -72,6 +75,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         if(status == HTTP_STATUS.OK || status == HTTP_STATUS.BAD_REQUEST) {
             return response.json()
+        } else if(status === HTTP_STATUS.UNAUTHORIZED) {
+            window.location.href = "/login/";
         } else {
             console.error("Response status code: " + response.status);
             throw "Unexcepted response status: " + response.status;
@@ -91,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             alertDiv.setAttribute("class", "alert alert-danger");
             alertDiv.setAttribute("role", "alert");
             alertDiv.appendChild(text);
-        } else {
+        } else if (status == 409){
             let text = document.createTextNode("Paczka nie może zostać przekazana, ponieważ proces jej dostawy jest w toku.")
             alertDiv.setAttribute("class", "alert alert-warning");
             alertDiv.setAttribute("role", "alert");
