@@ -59,12 +59,19 @@ class UserPage(Resource):
 @courier_page_namespace.route("/")
 class CourierPage(Resource):
 
+    parser = reqparse.RequestParser()
+    
+    parser.add_argument("token", required = True, type=str, help = "Token cannot be blank", location="form")
+    parser.add_argument("parcel_locker_id", required = True, type=str, help = "Parcel locker id cannot be blank", location="form")
+
     @api_app.response(200, "parcel_locker_courier.html")
     @api_app.produces(["text/html"])
     def get(self):
         headers = {'Content-Type': 'text/html'}
         return make_response(render_template("parcel_locker_courier.html"), 200, headers)
 
+    @api_app.expect(parser)
+    @api_app.doc(responses = {200: "Authorization: Correct, access_token", 400: "Authorization: Incorrect. Wrong id.", 401: "Authorization: Unauthorized"})
     def post(self):
         form = request.form
         token = form.get("token")
@@ -100,7 +107,12 @@ class CourierPage(Resource):
 
 @put_package_namespace.route("/")
 class PutPackage(Resource):
+    parser = reqparse.RequestParser()
+    
+    parser.add_argument("parcel_locker_id", required = True, type=str, help = "Parcel locker id cannot be blank", location="form")
+    parser.add_argument("waybill_hash", required = True, type=str, help = "Waybill hash id cannot be blank", location="form")
 
+    @api_app.expect(parser)
     @api_app.doc(responses = {200: "Changed status of package", 400: "Wrong parcel locker id or package id", 409: "Already package is in parcel locker"})
     def post(self):
         form = request.form
@@ -121,7 +133,14 @@ class PutPackage(Resource):
 
 @pickup_package_namespace.route("/")
 class PickupPackage(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument("Authorization", required = True, location="headers")
+    
+    parser.add_argument("package_id", required = True, type=str, help = "Package id cannot be blank", location="form")
+    parser.add_argument("parcel_locker_id", required = True, type=str, help = "Parcel locker id cannot be blank", location="form")
 
+    @api_app.expect(parser)
+    @api_app.doc(responses = {200: "Package is picked up correctly.", 400: "Wrong parcel locker id or package id."})
     @jwt_required
     def post(self):
         form = request.form
@@ -152,7 +171,12 @@ class AvailablePackagesPage(Resource):
 
 @packages_namespace.route("/list/<int:start>")
 class PackageList(Resource):
+    
+    parser = reqparse.RequestParser()
+    parser.add_argument("Authorization", required = True, location="headers")
 
+    @api_app.expect(parser)
+    @api_app.doc(responses = {200: "packages, previous, next", 400: "Start is incorrect", 401: "Unauthorized"})
     @jwt_required
     def get(self, start):
         courier_id = get_jwt_identity()
