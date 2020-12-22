@@ -47,7 +47,8 @@ class Login(Resource):
         headers = {'Content-Type': 'text/html'}
         return make_response(render_template("courier_login.html"), 200, headers)
 
-    @api_app.doc(responses = {200: "OK"})
+    @api_app.doc(responses = {200: "login: Ok", 400: "login: Reject"})
+    @api_app.expect(parser)
     def post(self):
         form = request.form
         login = form.get("login").encode("utf-8")
@@ -112,6 +113,9 @@ class Packages(Resource):
 
 @pickup_package_namespace.route("/")
 class PickupPackage(Resource):
+
+    parser = reqparse.RequestParser()
+    parser.add_argument("package_id", required = True, type=str, help = "Package id cannot be blank", location="form")
     
     @api_app.response(200, "courier_pickup_package.html")
     @api_app.produces(["text/html"])
@@ -132,7 +136,8 @@ class PickupPackage(Resource):
         else:
             return make_response("Unauthorized", 401)
 
-    api_app.doc(responses = {200: "Package is passed on correctly.", 400: "Package does not exist.", 401: "Unauthorized", 409: "Package has not NEW status."})
+    @api_app.expect(parser)
+    @api_app.doc(responses = {200: "Package is passed on correctly.", 400: "Package does not exist.", 401: "Unauthorized", 409: "Package has not NEW status."})
     def post(self):
         cookie = request.cookies.get(SESSION_ID)
         if cookie is not None:
@@ -157,7 +162,7 @@ class PickupPackage(Resource):
 @token_namespace.route("/")
 class Token(Resource):
 
-    api_app.doc(responses = {200: "access_token", 400: "Wrong parcel locker id.", 401: "Unauthorized"})
+    @api_app.doc(responses = {200: "token: True, access_token", 400: "token: False, Wrong parcel locker id.", 401: "Unauthorized"})
     def post(self):
         form = request.form
         cookie = request.cookies.get(SESSION_ID)
@@ -179,6 +184,7 @@ class Token(Resource):
 @packages_namespace.route("/list/<int:start>")
 class PackagesList(Resource):
 
+    @api_app.doc(responses = {200: "packages, previous, next", 400: "Start is incorrect", 401: "Unauthorized"})
     def get(self, start):
         cookie = request.cookies.get(SESSION_ID)
         if cookie is not None and db.hexists(COURIER_SESSIONS, cookie):
