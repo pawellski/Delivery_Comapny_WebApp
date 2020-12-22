@@ -11,6 +11,7 @@ import logging
 import redis
 import os
 import json
+from werkzeug.datastructures import FileStorage
 
 app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
@@ -71,6 +72,8 @@ class AddPackage(Resource):
     parser.add_argument("recipient_city", required = True, type=str, help = "Recipient city cannot be blank", location="form")
     parser.add_argument("recipient_country", required = True, type=str, help = "Recipient country cannot be blank", location="form")
     parser.add_argument("recipient_phone_number", required = True, type=str, help = "Recipient phone number cannot be blank", location="form")
+
+    parser.add_argument("package_image", required = True, type=FileStorage, location="files")
     
     @api_app.expect(parser)
     @api_app.doc(responses = {200: "add_package: Correct", 400: "add_package: Incorrect"})
