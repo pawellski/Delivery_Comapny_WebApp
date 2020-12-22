@@ -3,9 +3,12 @@
 mkdir PPD_app/waybill_files
 mkdir PPD_app/waybill_images
 
-a="LOGIN_JWT_SECRET=" 
-b=$(openssl rand -base64 32)
+a1="LOGIN_JWT_SECRET="
+b1=$(openssl rand -base64 32)
+a2="COURIER_JWT_SECRET="
+b2=$(openssl rand -base64 32)
 touch .env
-echo "${a}${b}" > .env
+echo "${a1}${b1}" > .env
+echo "${a2}${b2}" >> .env
 
 sudo docker-compose up --build
