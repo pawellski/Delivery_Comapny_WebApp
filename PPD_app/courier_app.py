@@ -90,11 +90,11 @@ class Login(Resource):
             if db.hexists(COURIERS, "KR054") == 0:
                 db.hset(COURIERS, "KR054", "Pa$$worD2")
             if db.hexists(COURIERS, "KR091") == 0:
-                db.hset(COURIERS, "KR0091", "Pa$$worD3")
+                db.hset(COURIERS, "KR091", "Pa$$worD3")
         else:
             db.hset(COURIERS, "KR023", "Pa$$worD1")
             db.hset(COURIERS, "KR054", "Pa$$worD2")
-            db.hset(COURIERS, "KR0091", "Pa$$worD3")
+            db.hset(COURIERS, "KR091", "Pa$$worD3")
 
 @logout_namespace.route("/")
 class Logout(Resource):
