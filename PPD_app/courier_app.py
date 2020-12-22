@@ -179,7 +179,10 @@ class PickupPackage(Resource):
 
 @token_namespace.route("/")
 class Token(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument("parcel_locker_id", required = True, type=str, help = "Parcel locker id cannot be blank", location="form")
 
+    @api_app.expect(parser)
     @api_app.doc(responses = {200: "token: True, access_token", 400: "token: False, Wrong parcel locker id.", 401: "Unauthorized"})
     def post(self):
         form = request.form
