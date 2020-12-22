@@ -7,7 +7,7 @@ import redis
 import os
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 api_app = Api(app = app, version = "0.1", title = "Courier App API", description = "REST-full API for Courier")
 
@@ -16,6 +16,8 @@ logout_namespace = api_app.namespace("logout", description = "Logout Page API")
 packages_namespace = api_app.namespace("packages", description = "Packages API")
 pickup_package_namespace = api_app.namespace("pickup_package", description = "Pick Up Package API")
 token_namespace = api_app.namespace("token", description = "Token API")
+error_namespace = api_app.namespace("error", description = "Error API")
+offline_namespace = api_app.namespace("offline", description = "Offline API")
 
 COURIERS = "couriers"
 SESSION_ID = "session-id"
@@ -32,6 +34,22 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 
 jwt = JWTManager(app)
 log = app.logger
+
+@error_namespace.route("/")
+class Error(Resource):
+    @api_app.response(200, "courier_error.html")
+    @api_app.produces(["text/html"])
+    def get(self):
+        headers = {'Content-Type': 'text/html'}
+        return make_response(render_template("courier_error.html"), 200, headers)
+
+@offline_namespace.route("/") 
+class Offline(Resource):
+    @api_app.response(200, "courier_offline.html")
+    @api_app.produces(["text/html"])
+    def get(self):
+        headers = {'Content-Type': 'text/html'}
+        return make_response(render_template("courier_offline.html"), 200, headers)
 
 @login_namespace.route("/")
 class Login(Resource):
