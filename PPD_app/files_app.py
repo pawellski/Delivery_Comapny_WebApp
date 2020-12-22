@@ -29,7 +29,7 @@ PATH_AND_FILENAME = "path_and_filename"
 PATH_AND_IMAGE = "path_and_image"
 TOKEN_EXPIRES_IN_SECONDS = 120
 NEW = "Nowa"
-START = "start"
+URL = "https://localhost:8081/packages/list/"
 
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
@@ -193,14 +193,14 @@ class PackageList(Resource):
                         packages.append(p)
             
             if start < 1:
-                previous = 0
+                previous = URL + "0"
             else:
-                previous = start - limit
+                previous = URL + str(start - limit)
             
             if start + limit > count:
-                next = start
+                next = URL + str(start)
             else:
-                next = start + limit
+                next = URL + str(start + limit)
             
             message = {"packages": packages, "previous": previous, "next": next, "numberOfPackages": count}
             log.debug(message['packages'])

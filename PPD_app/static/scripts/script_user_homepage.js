@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     var HTTP_STATUS = {OK: 200, BAD_REQUEST: 400};
     var tokenURL = "https://localhost:8080/token/";
-    var packagesURL = "https://localhost:8081/packages/list/";
     var packages0URL = "https://localhost:8081/packages/list/0";
     var packageURL = "https://localhost:8081/package/"
     var GET = "GET";
@@ -131,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 buttonPrev.appendChild(prevText);
                 myPackagesElem.appendChild(buttonPrev);
                 buttonPrev.addEventListener("click", function(e) {
-                    var prevURL = packagesURL + response.previous;
+                    var prevURL = response.previous;
                     getPackgaesList(prevURL);
                 })
 
@@ -141,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 buttonNext.appendChild(nextText);
                 myPackagesElem.appendChild(buttonNext);
                 buttonNext.addEventListener("click", function(e) {
-                    var nextURL = packagesURL + response.next;
+                    var nextURL = response.next;
                     getPackgaesList(nextURL);
                 })
 
