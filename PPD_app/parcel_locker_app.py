@@ -8,7 +8,7 @@ import redis
 import os
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 api_app = Api(app = app, version = "0.1", title = "Parcel Locker App API", description = "REST-full API for Parcel Locker")
 
