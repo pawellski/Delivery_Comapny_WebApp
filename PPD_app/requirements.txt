@@ -6,3 +6,6 @@ flask-jwt-extended
 flask-cors
 fpdf
 Werkzeug==0.16.1
+flask-socketio
+eventlet
+
