@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, make_response
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from flask_restplus import Api, Resource, fields, reqparse
 from exception.exception import UnauthorizedError, ForbiddenError
+from datetime import datetime
 import hashlib, uuid
 import redis
 import os
@@ -166,7 +167,9 @@ class PickupPackage(Resource):
                 if db.exists(package_id):
                     if db.hget(package_id, "status") == NEW:
                         db.hset(package_id, "status", PASSED_ON)
-                        db.sadd(login, package_id)
+                        now = datetime.now()
+                        now_string = now.strftime("%d/%m/%Y %H:%M:%S").encode('utf-8')
+                        db.hset(login, package_id, now_string)
                         return make_response("Package is passed on correctly.", 200)
                     else:
                         return make_response("Package has not NEW status.", 409)
@@ -210,7 +213,8 @@ class PackagesList(Resource):
         cookie = request.cookies.get(SESSION_ID)
         if cookie is not None and db.hexists(COURIER_SESSIONS, cookie):
             courier_id = db.hget(COURIER_SESSIONS, cookie)
-            packages_id = list(db.smembers(courier_id.encode("utf-8")))
+            unsorted_packages_id = db.hgetall(courier_id.encode('utf-8'))
+            packages_id = sorted(unsorted_packages_id, key=unsorted_packages_id.get)
             count = len(packages_id)
 
             packages = []

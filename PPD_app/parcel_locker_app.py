@@ -5,6 +5,7 @@ from flask_socketio import SocketIO, join_room, leave_room, emit, send
 from flask_cors import CORS
 from jwt import decode, InvalidTokenError
 from exception.exception import UnauthorizedError, ForbiddenError
+from datetime import datetime
 import hashlib, uuid
 import redis
 import os
@@ -158,7 +159,9 @@ class PickupPackage(Resource):
         if parcel_locker_id is not None and db.sismember(PARCEL_LOCKERS, parcel_locker_id.encode("utf-8")):
             if package_id is not None and db.exists(package_id.encode("utf-8")):
                 db.srem(parcel_locker_id.encode("utf-8"), package_id.encode("utf-8"))
-                db.sadd(courier, package_id.encode("utf-8"))
+                now = datetime.now()
+                now_string = now.strftime("%d/%m/%Y %H:%M:%S")
+                db.hset(courier, package_id.encode('utf-8'), now_string.encode('utf-8'))
                 db.hset(package_id.encode("utf-8"), "status", PICK_UP)
                 return "Package is picked up correctly.", 200
 
