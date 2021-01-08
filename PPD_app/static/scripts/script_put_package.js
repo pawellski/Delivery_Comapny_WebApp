@@ -6,6 +6,34 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var putPackageForm = document.getElementById("put-package");
 
+    const PUT_PACKAGE_ROOM = "put-package-room"
+
+    var ws_uri = "https://localhost:8082/";
+    socket = io.connect(ws_uri);
+    joinIntoRoom(PUT_PACKAGE_ROOM);
+
+    socket.on("connect", function () {
+        console.log("Correctly connected to the chat");
+    });
+
+    socket.on("joined_room", function (message) {
+        console.log("Joined to the room ", message);
+    });
+
+    socket.on("chat_message", function (data) {
+        console.log("Received new chat message:", data);
+
+    });
+
+    function joinIntoRoom(room_id) {
+        socket.emit("join", {room_id: room_id });
+    }
+
+    function sendMessage(room_id, text) {
+        data = { room_id: room_id, message: text };
+        socket.emit("new_message", data);
+    }
+
     putPackageForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
@@ -48,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             alertDiv.setAttribute("class", "alert alert-success");
             alertDiv.setAttribute("role", "alert");
             alertDiv.appendChild(text);
+            sendMessage(PUT_PACKAGE_ROOM, "Packages updated! - Put package into parcel locker.");
         } else if (status == 400) {
             let text = document.createTextNode("Dane zostały wprowadzone niepoprawnie. Spróbuj ponownie.")
             alertDiv.setAttribute("class", "alert alert-danger");
