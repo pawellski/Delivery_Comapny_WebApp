@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var putPackageForm = document.getElementById("put-package");
 
-    const PUT_PACKAGE_ROOM = "put-package-room"
+    const PUT_PACKAGE_ROOM = "put-package-room";
 
     var ws_uri = "https://localhost:8082/";
     socket = io.connect(ws_uri);

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var DELETE = "DELETE";
 
     const PUT_PACKAGE_ROOM = "put-package-room";
+    const PICKUP_PACKAGE_ROOM = "pickup-package-room";
 
     let currentPackagesURL = packages0URL;
 
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var ws_uri = "https://localhost:8082";
     socket = io.connect(ws_uri);
     joinIntoRoom(PUT_PACKAGE_ROOM);
+    joinIntoRoom(PICKUP_PACKAGE_ROOM);
 
     socket.on("connect", function () {
         console.log("Correctly connected to the chat");
