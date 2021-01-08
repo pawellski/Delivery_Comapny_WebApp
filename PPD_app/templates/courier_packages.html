@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="/styles/style_3.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.min.js"></script>
     <script src="/scripts/script_courier_own_packages.js"></script>
 
     <title>P&P DELIVERY</title>
@@ -12,7 +13,7 @@
   <body>
       
     <nav class="navbar navbar-expand-lg navbar-light">       
-        <a class="navbar-brand font-weight-bold text-decoration-none" href="https://localhost:8083/login_page/">
+        <a class="navbar-brand font-weight-bold text-decoration-none" href="https://localhost:8083/login/">
             <img src="/images/logo.png" alt="Logo" width="50px" height="50px" >
             KURIER
         </a>
@@ -49,6 +50,7 @@
     <div class="container">
         <div id="packages">
         </div>
+        <div id="alert-div-courier-packages"></div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
