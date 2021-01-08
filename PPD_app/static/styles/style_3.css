@@ -83,3 +83,9 @@ input {
     margin-right: auto;
     word-break: break-all;
 }
+
+#alert-div-courier-packages {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -4,9 +4,44 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var packages0URL = "https://localhost:8083/packages/list/0";
     var GET = "GET";
 
+    const PICKUP_PACKAGE_ROOM = "pickup-package-room";
+
+    let alertDiv = document.getElementById("alert-div-courier-packages");
+    let currentPackagesURL = packages0URL;
+
+    var ws_uri = "https://localhost:8082";
+    socket = io.connect(ws_uri);
+    joinIntoRoom(PICKUP_PACKAGE_ROOM);
+
+    socket.on("connect", function () {
+        console.log("Correctly connected to the chat");
+    });
+
+    socket.on("joined_room", function (message) {
+        console.log("Joined to the room ", message);
+    });
+
+    socket.on("chat_message", function (data) {
+        console.log("Received new chat message:", data);
+        getPackagesList(currentPackagesURL);
+        let text = document.createTextNode("Pojawiły się nowe paczki do dostarczenia.")
+        let warning = document.createElement("div");
+        warning.setAttribute("class", "alert alert-warning");
+        warning.setAttribute("role", "alert");
+        warning.appendChild(text)
+        alertDiv.appendChild(warning);
+    });
+
+    function joinIntoRoom(room_id) {
+        socket.emit("join", {room_id: room_id });
+    }
+
     getPackagesList(packages0URL);
 
     function getPackagesList(URL) {
+        alertDiv.innerHTML = "";
+        currentPackagesURL = URL;
+
         let params = {
             method: GET,
             redirect: "follow"

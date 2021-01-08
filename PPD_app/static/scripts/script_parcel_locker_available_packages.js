@@ -8,7 +8,36 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var currentParcelLocker = window.localStorage.getItem("currentParcelLocker");
     console.log(currentParcelLocker);
 
+    const PICKUP_PACKAGE_ROOM = "pickup-package-room";
+
     let packagesToRecive = [];
+    var ws_uri = "https://localhost:8082/";
+    
+    socket = io.connect(ws_uri);
+    joinIntoRoom(PICKUP_PACKAGE_ROOM);
+
+    socket.on("connect", function () {
+        console.log("Correctly connected to the chat");
+    });
+
+    socket.on("joined_room", function (message) {
+        console.log("Joined to the room ", message);
+    });
+
+    socket.on("chat_message", function (data) {
+        console.log("Received new chat message:", data);
+
+    });
+
+    function joinIntoRoom(room_id) {
+        socket.emit("join", {room_id: room_id });
+    }
+
+    function sendMessage(room_id, text) {
+        data = { room_id: room_id, message: text };
+        socket.emit("new_message", data);
+    }
+
 
     getPackagesList(packages0URL);
 
@@ -158,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             packagesToRecive.forEach(function(item) {
                 submitSavedChanges(item);
             });
+            sendMessage(PICKUP_PACKAGE_ROOM, "Packages updated! - Pick up packages from parcel locker.");
             window.location.href = "/courier_page/";
         });
 
