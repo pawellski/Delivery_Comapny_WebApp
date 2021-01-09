@@ -28,7 +28,7 @@ FILES_PATH = "waybill_files/"
 IMAGES_PATH = "waybill_images/"
 PATH_AND_FILENAME = "path_and_filename"
 PATH_AND_IMAGE = "path_and_image"
-TOKEN_EXPIRES_IN_SECONDS = 120
+TOKEN_EXPIRES_IN_SECONDS = 300
 NEW = "Nowa"
 URL = "https://localhost:8081/packages/list/"
 

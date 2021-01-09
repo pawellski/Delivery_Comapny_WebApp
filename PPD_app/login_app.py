@@ -24,7 +24,7 @@ SESSION_ID = "session-id"
 users = "users"
 sessions = "sessions"
 SECRET_KEY = "LOGIN_JWT_SECRET"
-TOKEN_EXPIRES_IN_SECONDS = 120
+TOKEN_EXPIRES_IN_SECONDS = 300
 
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
@@ -163,7 +163,7 @@ class Login(Resource):
                 log.debug(db.hgetall(sessions))
                 access_token = create_access_token(identity=login.decode("utf-8"))
                 response = make_response({"login": "Ok", "access_token": access_token}, 200)
-                response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
+                response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
                 return response
 
         return {"login": "Reject"}, 400
@@ -198,7 +198,7 @@ class UserHomepage(Resource):
                 db.hset(sessions, session_uuid.encode("utf-8"), login)
                 headers = {'Content-Type': 'text/html'}
                 response = make_response(render_template("user_homepage.html"), 200, headers)
-                response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
+                response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
                 return response
             else:
                 raise UnauthorizedError
@@ -222,7 +222,7 @@ class AddPackage(Resource):
                 db.hset(sessions, session_uuid.encode("utf-8"), login)
                 headers = {'Content-Type': 'text/html'}
                 response = make_response(render_template("add_package.html"), 200, headers)
-                response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
+                response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
                 return response
             else:
                 raise UnauthorizedError

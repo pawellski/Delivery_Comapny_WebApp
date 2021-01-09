@@ -79,7 +79,7 @@ class Login(Resource):
                     session_uuid = str(uuid.uuid4())
                     db.hset(COURIER_SESSIONS, session_uuid, login)
                     response = make_response({"login": "Ok"}, 200)
-                    response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
+                    response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
                     return response
 
         return {"login": "Reject"}, 400
@@ -123,7 +123,7 @@ class Packages(Resource):
                 db.hset(COURIER_SESSIONS, session_uuid.encode("utf-8"), login)
                 headers = {'Content-Type': 'text/html'}
                 response = make_response(render_template("courier_packages.html"), 200, headers)
-                response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
+                response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
                 return response
             else:
                 return make_response("Unauthorized", 401)
@@ -148,7 +148,7 @@ class PickupPackage(Resource):
                 db.hset(COURIER_SESSIONS, session_uuid.encode("utf-8"), login)
                 headers = {'Content-Type': 'text/html'}
                 response = make_response(render_template("courier_pickup_package.html"), 200, headers)
-                response.set_cookie(SESSION_ID, session_uuid, max_age=120, secure=True, httponly=True)
+                response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
                 return response
             else:
                 return make_response("Unauthorized", 401)
