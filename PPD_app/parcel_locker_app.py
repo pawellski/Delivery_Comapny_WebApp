@@ -13,7 +13,6 @@ import json
 
 app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
-socket_io = SocketIO(app, cors_allowed_origins="*")
 api_app = Api(app = app, version = "0.1", title = "Parcel Locker App API", description = "REST-full API for Parcel Locker")
 
 user_page_namespace = api_app.namespace("user_page", description = "User Page API")
@@ -30,8 +29,6 @@ PICK_UP = "Odebrana"
 PARCEL_LOCKERS = "parcel_lockers"
 COURIERS = "couriers"
 URL = "https://localhost:8082/packages/list/"
-ROOM_ID = "room_id"
-MESSAGE = "message"
 
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 
@@ -233,26 +230,3 @@ class PackageList(Resource):
         package_info = {"id": package_id}
         return package_info    
             
-@socket_io.on("connect")
-def handle_on_connect():
-    app.logger.debug("Connected -> OK")
-    emit("connection response", {"data": "Correctly connected"})
-
-
-@socket_io.on("disconnect")
-def handle_on_disconnect():
-    app.logger.debug("Disconnected -> Bye")
-
-
-@socket_io.on("join")
-def handle_on_join(data):
-    room_id = data[ROOM_ID]
-    join_room(room_id)
-    emit("joined_room", {"room_id": room_id})
-    app.logger.debug(f"Added to the room: {room_id}")
-
-
-@socket_io.on("new_message")
-def handle_new_message(data):
-    app.logger.debug(f"Received data: {data}.")
-    emit("chat_message", {MESSAGE: data[MESSAGE]}, room=data[ROOM_ID])
