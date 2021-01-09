@@ -5,13 +5,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var GET = "GET";
 
     const PICKUP_PACKAGE_ROOM = "pickup-package-room";
+    const PASSON_PACKAGE_ROOM = "passon-package-room";
 
     let alertDiv = document.getElementById("alert-div-courier-packages");
     let currentPackagesURL = packages0URL;
 
-    var ws_uri = "https://localhost:8082";
+    var ws_uri = "https://localhost:8084";
     socket = io.connect(ws_uri);
     joinIntoRoom(PICKUP_PACKAGE_ROOM);
+    joinIntoRoom(PASSON_PACKAGE_ROOM);
 
     socket.on("connect", function () {
         console.log("Correctly connected to the chat");

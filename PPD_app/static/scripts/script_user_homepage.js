@@ -8,16 +8,18 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     const PUT_PACKAGE_ROOM = "put-package-room";
     const PICKUP_PACKAGE_ROOM = "pickup-package-room";
+    const PASSON_PACKAGE_ROOM = "passon-package-room";
 
     let currentPackagesURL = packages0URL;
 
     getToken();
     getPackgaesList(packages0URL);
 
-    var ws_uri = "https://localhost:8082";
+    var ws_uri = "https://localhost:8084";
     socket = io.connect(ws_uri);
     joinIntoRoom(PUT_PACKAGE_ROOM);
     joinIntoRoom(PICKUP_PACKAGE_ROOM);
+    joinIntoRoom(PASSON_PACKAGE_ROOM);
 
     socket.on("connect", function () {
         console.log("Correctly connected to the chat");
@@ -56,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     }
 
     function displayTableWithPackages(response) {
-            response = JSON.parse(response)
+            response = JSON.parse(response);
             let myPackagesElem = document.getElementById("my-packages");
             let summaryElem = document.getElementById("summary");
             numberOfPackages = response.numberOfPackages;

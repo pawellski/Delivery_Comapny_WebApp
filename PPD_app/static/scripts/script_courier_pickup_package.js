@@ -8,6 +8,36 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var passOnPackageForm = document.getElementById("passon-package-form");
     var getTokenForm = document.getElementById("get-token-form");
 
+    const PASSON_PACKAGE_ROOM = "passon-package-room";
+
+    var ws_uri = "https://localhost:8084";
+    
+    socket = io.connect(ws_uri);
+    joinIntoRoom(PASSON_PACKAGE_ROOM);
+
+    socket.on("connect", function () {
+        console.log("Correctly connected to the chat");
+    });
+
+    socket.on("joined_room", function (message) {
+        console.log("Joined to the room ", message);
+    });
+
+    socket.on("chat_message", function (data) {
+        console.log("Received new chat message:", data);
+
+    });
+
+    function joinIntoRoom(room_id) {
+        socket.emit("join", {room_id: room_id });
+    }
+
+    function sendMessage(room_id, text) {
+        data = { room_id: room_id, message: text };
+        socket.emit("new_message", data);
+    }
+
+
     passOnPackageForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
@@ -62,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
         if(status === HTTP_STATUS.OK || status === HTTP_STATUS.BAD_REQUEST || status === HTTP_STATUS.CONFLICT) {
             return response.status
         } else if(status === HTTP_STATUS.UNAUTHORIZED) {
-            console.log("DZIALLLA");
             window.location.href = "/login/";
         } else {
             console.error("Response status code: " + response.status);
@@ -91,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             alertDiv.setAttribute("class", "alert alert-success");
             alertDiv.setAttribute("role", "alert");
             alertDiv.appendChild(text);
+            sendMessage(PASSON_PACKAGE_ROOM, "Packages updated! - Pass on package by courier.");
         } else if (status == 400) {
             let text = document.createTextNode("Paczka o podanym numerze nie istnieje.")
             alertDiv.setAttribute("class", "alert alert-danger");
