@@ -36,5 +36,13 @@ services:
     environment:
       FLASK_ENV: development
       COURIER_JWT_SECRET: $COURIER_JWT_SECRET
+  web-socket:
+    build:
+     context: .
+     dockerfile: ./Docker/ws/Dockerfile
+    ports: ["8084:8884"]
+    volumes: [./PPD_app:/PPD_app]
+    environment:
+      FLASK_ENV: development
   redis-db:
     image: "redis:alpine"
