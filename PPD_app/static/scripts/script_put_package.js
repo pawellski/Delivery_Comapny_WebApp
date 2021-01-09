@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     const PUT_PACKAGE_ROOM = "put-package-room";
 
-    var ws_uri = "https://localhost:8082/";
+    var ws_uri = "https://localhost:8084";
     socket = io.connect(ws_uri);
     joinIntoRoom(PUT_PACKAGE_ROOM);
 

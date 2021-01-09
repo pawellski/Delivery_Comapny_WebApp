@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     const PICKUP_PACKAGE_ROOM = "pickup-package-room";
 
     let packagesToRecive = [];
-    var ws_uri = "https://localhost:8082/";
+    var ws_uri = "https://localhost:8084";
     
     socket = io.connect(ws_uri);
     joinIntoRoom(PICKUP_PACKAGE_ROOM);
