@@ -36,3 +36,16 @@ form {
     max-width: 350px;
     margin: auto;
 }
+
+.align-center-hr {
+    border-top: 1px solid black;
+    line-height: 1px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.span-or {
+    background: lightgray;
+    padding-left: 1em;
+    padding-right: 1em;
+}

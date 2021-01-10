@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var HTTP_STATUS = {OK: 200, BAD_REQUEST: 400};
 
     let loginForm = document.getElementById("login-form");
+    let oAuthButton = document.getElementById("oauth-courier-button");
 
     loginForm.addEventListener("submit", function(event) {
         event.preventDefault();
@@ -20,6 +21,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
         submitLoginForm();
 
     });
+
+    oAuthButton.addEventListener("click", function() {
+        window.location.href = "/oauth_login";
+    })
 
     function submitLoginForm() {
         
