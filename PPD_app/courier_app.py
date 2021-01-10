@@ -1,8 +1,10 @@
-from flask import Flask, request, render_template, make_response
+from flask import Flask, request, render_template, make_response, redirect, url_for
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from flask_restplus import Api, Resource, fields, reqparse
 from exception.exception import UnauthorizedError, ForbiddenError
 from datetime import datetime
+from authlib.integrations.flask_client import OAuth
+from oauth_config import *
 import hashlib, uuid
 import redis
 import os
@@ -11,6 +13,17 @@ import json
 app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 api_app = Api(app = app, version = "0.1", title = "Courier App API", description = "REST-full API for Courier")
+app.secret_key = SECRET_KEY
+oauth = OAuth(app)
+
+auth0 = oauth.register(
+    "ms4-auth0-2021",
+    api_base_url=OAUTH_BASE_URL,
+    client_id=OAUTH_CLIENT_ID,
+    client_secret=OAUTH_CLIENT_SECRET,
+    access_token_url=OAUTH_ACCESS_TOKEN_URL,
+    authorize_url=OAUTH_AUTHORIZE_URL,
+    client_kwargs={"scope": OAUTH_SCOPE})
 
 login_namespace = api_app.namespace("login", description = "Login Page API")
 logout_namespace = api_app.namespace("logout", description = "Logout Page API")
@@ -105,7 +118,11 @@ class Logout(Resource):
     def get(self):
         cookie = request.cookies.get(SESSION_ID)
         if cookie is not None:
-            db.hdel(COURIER_SESSIONS, cookie)
+            if db.hexists(COURIER_SESSIONS, cookie):
+                login = db.hget(COURIER_SESSIONS, cookie)
+                db.hdel(COURIER_SESSIONS, cookie)
+                if login.startswith('C_') and login.endswith('_OAUTH'):
+                    return redirect("/oauth_logout")       
         headers = {'Content-Type': 'text-html'}
         return make_response(render_template("courier_login.html"), 200, headers)
 
@@ -254,3 +271,40 @@ class PackagesList(Resource):
     def get_package_json(self, package_id):
         package_info = {"id": package_id}
         return package_info
+
+@app.route("/oauth_login")
+def login():
+    return auth0.authorize_redirect(
+        redirect_uri=OAUTH_CALLBACK_COURIER_URL,
+        audience="")
+
+
+@app.route("/logout_info")
+def logout_info():
+    return redirect("/login/")
+
+
+@app.route("/oauth_logout")
+def logout():
+    url_params = "returnTo=" + url_for("logout_info", _external=True)
+    url_params += "&"
+    url_params += "client_id=" + OAUTH_CLIENT_ID
+
+    return redirect(auth0.api_base_url + "/v2/logout?" + url_params)
+
+
+@app.route("/callback")
+def oauth_callback():
+    auth0.authorize_access_token()
+    resp = auth0.get("userinfo")
+    nickname = resp.json()[NICKNAME]
+    login = 'C_' + nickname + '_OAUTH'
+    if db.hget(COURIERS, login.encode('utf-8')) is None:
+        db.hset(COURIERS, login.encode('utf-8'), "")
+    
+    session_uuid = str(uuid.uuid4())
+    db.hset(COURIER_SESSIONS, session_uuid, login.encode('utf-8'))
+    response = redirect('/packages/')
+    response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
+
+    return response
