@@ -8,4 +8,5 @@ fpdf
 Werkzeug==0.16.1
 flask-socketio
 eventlet
-
+requests
+authlib
