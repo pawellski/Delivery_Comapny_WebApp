@@ -1,7 +1,9 @@
-from flask import Flask, request, render_template, make_response
+from flask import Flask, request, render_template, make_response, redirect, url_for
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from flask_restplus import Api, Resource, fields, reqparse
 from exception.exception import UnauthorizedError, ForbiddenError
+from authlib.integrations.flask_client import OAuth
+from oauth_config import *
 import hashlib, uuid
 import redis
 import os
@@ -10,6 +12,17 @@ import os
 app = Flask(__name__, static_url_path="")
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 api_app = Api(app = app, version = "0.1", title = "Login App API", description = "REST-full API for login")
+app.secret_key = SECRET_KEY
+oauth = OAuth(app)
+
+auth0 = oauth.register(
+    "ms4-auth0-2021",
+    api_base_url=OAUTH_BASE_URL,
+    client_id=OAUTH_CLIENT_ID,
+    client_secret=OAUTH_CLIENT_SECRET,
+    access_token_url=OAUTH_ACCESS_TOKEN_URL,
+    authorize_url=OAUTH_AUTHORIZE_URL,
+    client_kwargs={"scope": OAUTH_SCOPE})
 
 home_namespace = api_app.namespace("home", description = "Home API")
 user_namespace = api_app.namespace("user", description = "Check user API")
@@ -20,6 +33,7 @@ user_homepage_namespace = api_app.namespace("user_homepage", description = "User
 add_package_namespace = api_app.namespace("add_package", description = "Add package API")
 token_namespace = api_app.namespace("token", description = "Token API")
 
+OAUTH = "oauth"
 SESSION_ID = "session-id"
 users = "users"
 sessions = "sessions"
@@ -48,7 +62,6 @@ class User(Resource):
     def get(self, user):
         if db.scard(users) != 0:
             if db.sismember(users, user):
-                log.debug(db.smembers(users))
                 return {"user_exists": "True"}, 200
         return {"user_exists": "False"}, 404
 
@@ -80,10 +93,7 @@ class Register(Resource):
     def post(self):
         form = request.form
         login = form.get("login").encode("utf-8")
-        log.debug(login)
         errors = self.validation(form)
-        log.debug("ERRORS")
-        log.debug(errors)
         if len(errors) == 0:        
             db.sadd(users, login)
 
@@ -106,7 +116,6 @@ class Register(Resource):
     
     def validation(self, form):
         errors = {}
-        log.debug(form)
         if form.get("name").encode("utf-8").isalpha() == False:
             errors["name"] = "Name incorret."
         if form.get("surname").encode("utf-8").isalpha() == False:
@@ -155,12 +164,7 @@ class Login(Resource):
         if db.sismember(users, login):
             if db.hget(login, "password") == password:
                 session_uuid = str(uuid.uuid4())
-                log.debug("Login user")
-                log.debug(login)
-                log.debug("SESSION ID")
-                log.debug(session_uuid)
                 db.hset(sessions, session_uuid, login)
-                log.debug(db.hgetall(sessions))
                 access_token = create_access_token(identity=login.decode("utf-8"))
                 response = make_response({"login": "Ok", "access_token": access_token}, 200)
                 response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
@@ -175,11 +179,12 @@ class Logout(Resource):
     @api_app.produces(["text/html"])
     def get(self):
         cookie = request.cookies.get(SESSION_ID)
-        log.debug(cookie)
         if cookie is not None:
-            db.hdel(sessions, cookie)
-            log.debug(db.hgetall(sessions))
-
+            if db.hexists(sessions, cookie):
+                login = db.hget(sessions, cookie)
+                db.hdel(sessions, cookie)
+                if login.startswith('U_') and login.endswith('_OAUTH'):
+                    return redirect("/oauth_logout")       
         headers = {'Content-Type': 'text-html'}
         return make_response(render_template("index.html"), 200, headers)
 
@@ -248,6 +253,46 @@ class Token(Resource):
         else:
             raise UnauthorizedError
     
+@app.route("/oauth_login")
+def login():
+    return auth0.authorize_redirect(
+        redirect_uri=OAUTH_CALLBACK_LOGIN_URL,
+        audience="")
+
+
+@app.route("/logout_info")
+def logout_info():
+    return redirect("/home/")
+
+
+@app.route("/oauth_logout")
+def logout():
+    url_params = "returnTo=" + url_for("logout_info", _external=True)
+    url_params += "&"
+    url_params += "client_id=" + OAUTH_CLIENT_ID
+
+    return redirect(auth0.api_base_url + "/v2/logout?" + url_params)
+
+
+@app.route("/callback")
+def oauth_callback():
+    auth0.authorize_access_token()
+    resp = auth0.get("userinfo")
+    nickname = resp.json()[NICKNAME]
+    login = 'U_' + nickname + '_OAUTH'
+    
+    if db.sismember(users, login.encode('utf-8')) == 0:
+        db.sadd(users, login.encode('utf-8'))
+    
+    session_uuid = str(uuid.uuid4())
+    db.hset(sessions, session_uuid, login.encode('utf-8'))
+    access_token = create_access_token(identity=login)
+    response = redirect('/user_homepage/')
+    response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
+    response.set_cookie(OAUTH, "True")
+
+    return response
+
 
 @app.errorhandler(400)
 def handle_bad_request(error):
