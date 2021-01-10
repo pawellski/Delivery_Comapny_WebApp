@@ -9,6 +9,8 @@ services:
     environment:
       FLASK_ENV: development
       LOGIN_JWT_SECRET: $LOGIN_JWT_SECRET
+      LAB_AUTH_SECRET: $LAB_AUTH_SECRET
+      OAUTH_CLIENT_SECRET: $OAUTH_CLIENT_SECRET
   web-files:
     build:
      context: .
@@ -36,6 +38,8 @@ services:
     environment:
       FLASK_ENV: development
       COURIER_JWT_SECRET: $COURIER_JWT_SECRET
+      LAB_AUTH_SECRET: $LAB_AUTH_SECRET
+      OAUTH_CLIENT_SECRET: $OAUTH_CLIENT_SECRET
   web-socket:
     build:
      context: .
