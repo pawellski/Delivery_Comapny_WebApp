@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
     let currentPackagesURL = packages0URL;
 
     getToken();
-    getPackgaesList(packages0URL);
 
     var ws_uri = "https://localhost:8084";
     socket = io.connect(ws_uri);
@@ -238,6 +237,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function setToken(correctResponse) {
         window.localStorage.setItem("access_token", correctResponse.access_token);
         console.log("Set token correctly!")
+        getPackgaesList(packages0URL);
     }
 
 
