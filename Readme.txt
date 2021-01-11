@@ -34,3 +34,16 @@ W celu uruchomienia projektu należy uruchomić skrypt "start_script",
 który jest zamieszcozony w repozytorium.
 
 Aplikację kuriera należy uruchomić z poziomiu linni poleceń (zgodnie z zaleceniem - Bitbucket).
+
+KM4
+Podobnie jak w przypadku trzeciego kamienia milowego należy uruchomić skrypt "start_script".
+Ze względu na fakt, że realizowany projekt jest projektem studenckim, w wyżej wymienionym
+skrypcie znalazł się sekretny klucz, który nie powinien tam się znaleźć.
+
+Wszystkie aplikacje dostępne są pod tymi samymi adresami URL względem trzeciego kamienia milowego.
+
+Dodatkowo została dodana piąta aplikacja do obsługi web socketów. Aplikacja została osadzona na
+porcie 8084.
+
+Zalecane jest uruchomienie aplikacji z poziomu linni poleceń (zgodnie z zaleceniem - Bitbucket).
+W tym przypadku ma to również wpływ na poprawne działanie web socketów.

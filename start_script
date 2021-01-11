@@ -7,8 +7,12 @@ a1="LOGIN_JWT_SECRET="
 b1=$(openssl rand -base64 32)
 a2="COURIER_JWT_SECRET="
 b2=$(openssl rand -base64 32)
+a3="LAB_AUTH_SECRET="
+b3=$(openssl rand -base64 32)
+
 touch .env
 echo "${a1}${b1}" > .env
 echo "${a2}${b2}" >> .env
-
-sudo docker-compose up --build
+echo "${a3}${b3}" >> .env
+echo "OAUTH_CLIENT_SECRET=qPTXV7LXAH0QOHoVJSKaJ8b_2yKrU8DcTShaucUpq8gES_jlSyrEvpvd7g9nyMRv" >> .env
+docker-compose up --build
