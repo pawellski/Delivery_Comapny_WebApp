@@ -286,10 +286,8 @@ def oauth_callback():
     
     session_uuid = str(uuid.uuid4())
     db.hset(sessions, session_uuid, login.encode('utf-8'))
-    access_token = create_access_token(identity=login)
     response = redirect('/user_homepage/')
     response.set_cookie(SESSION_ID, session_uuid, max_age=300, secure=True, httponly=True)
-    response.set_cookie(OAUTH, "True")
 
     return response
 
